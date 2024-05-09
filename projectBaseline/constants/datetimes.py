@@ -1,0 +1,9 @@
+DATE_FORMAT_SIMPLE = '%Y-%m-%d %H:%M:%S'
+DATE_FORMAT_TIMEZONE = '%Y-%m-%dT%H:%M:%SZ'
+DATE_FORMAT_NO_TIMEZONE = '%Y-%m-%dT%H:%M:%S'
+
+# to be used for caching
+ONE_MINUTE = 60
+FIVE_MINUTES = 5 * ONE_MINUTE
+ONE_HOUR = 3600
+ONE_DAY = 86400
