@@ -73,12 +73,7 @@ Make desired changes then commit the branch.
 
 To create a new Django app, run the following command
 
-    django-admin startapp {app_name} projectBaseline/apps/{app_name}
-
-Make sure to create the `{app_name}` directory before running the command.
-Once created, edit the `app.py` folder name section to be
-
-    name = 'projectBaseline.apps.{app_name}'
+    make app APP_NAME={app_name}
 
 Add the newly created app to the list of `INSTALLED_APPS` on the `projectBaseline.conf.settings.common.py` file
 under the `LOCAL_APPS_LIST`

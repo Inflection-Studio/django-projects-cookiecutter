@@ -23,6 +23,15 @@ GREEN := \033[0;32m
 LIGHT_PURPLE := \033[1;35m
 RESET := \033[0m
 
+PROJECT_NAME := projectBaseline
+APP_NAME :=
+SETTINGS_PY := ${PROJECT_NAME}/conf/settings/common.py
+APP_DIRECTORY := ${PROJECT_NAME}/apps/
+APP_LABEL := login
+MODEL_NAME := UserAccount
+FIXTURE_NAME := users
+SHELL_TYPE := ipython
+
 # poetry installation
 .PHONY: install-poetry
 install-poetry:
@@ -72,9 +81,21 @@ superuser: deps-clean
 collectstatic: deps-clean
 	poetry run python manage.py collectstatic --noinput
 
+.phony: shell
+shell: deps-clean
+	poetry run python manage.py shell_plus --${SHELL_TYPE}
+
 .PHONY: show_urls
 show_urls: deps-clean
 	poetry run python manage.py show_urls
+
+.phony: app
+app:
+	python manage.py startapp ${APP_NAME}
+	@echo "App ${APP_NAME} created successfully"
+	mv ./${APP_NAME} ${APP_DIRECTORY}
+	@echo "App Moved to the apps directory ${APP_DIRECTORY}"
+	@echo "Don't forget to add the app to the LOCAL_APPS apps in the settings file ${SETTINGS_PY} like so: ${PROJECT_NAME}.apps.${APP_NAME}.apps.${APP_NAME}Config"
 
 # docker
 .PHONY: docker-deploy
@@ -102,10 +123,6 @@ hooks:
 .PHONY: fmt-all
 fmt-all:
 	pre-commit run --all-files
-
-APP_LABEL := login
-MODEL_NAME := UserAccount
-FIXTURE_NAME := users
 
 # Fixtures
 .PHONY: dump-fixtures

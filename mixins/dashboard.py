@@ -1,7 +1,8 @@
 # controls who views the dashboard
 from django.contrib import messages
 from django.contrib.auth.mixins import LoginRequiredMixin, UserPassesTestMixin
-from django.views import View
+from django.contrib.sites.models import Site
+from django.views.generic.base import ContextMixin, View
 
 
 class SuccessMessageMixin:
@@ -23,8 +24,12 @@ class SuccessMessageMixin:
 
 
 class AdminDashBoardMixin(
-    LoginRequiredMixin, UserPassesTestMixin, SuccessMessageMixin, View
+    LoginRequiredMixin, UserPassesTestMixin, SuccessMessageMixin, ContextMixin, View
 ):
+    extra_context = {
+        "site": Site.objects.get_current(),
+    }
+
     def test_func(self):
         user = self.request.user
         if user.is_staff or user.is_superuser:

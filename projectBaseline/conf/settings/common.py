@@ -77,6 +77,7 @@ DJANGO_APPS = [
     "django.contrib.admin",
     "django.contrib.auth",
     "django.contrib.contenttypes",
+    'django.contrib.humanize',
     "django.contrib.sessions",
     "django.contrib.messages",
     "django.contrib.staticfiles",
@@ -86,6 +87,10 @@ DJANGO_APPS = [
 
 # 3rd party libraries
 THIRD_PARTY_APPS = [
+    "allauth",
+    "allauth.account",
+    "bootstrap4",
+    "bootstrap_datepicker_plus",
     "corsheaders",
     "django_extensions",
     "django_filters",
@@ -95,9 +100,11 @@ THIRD_PARTY_APPS = [
     "martor",
     "rest_framework",
     "simple_history",
+    "widget_tweaks",
 ]
 
 LOCAL_APPS = [
+    "projectBaseline.apps.dashboard.apps.DashboardConfig",
     "projectBaseline.apps.login.apps.LoginConfig",
 ]
 
@@ -112,6 +119,7 @@ MIDDLEWARE = [
     "django.contrib.auth.middleware.AuthenticationMiddleware",
     "django.contrib.messages.middleware.MessageMiddleware",
     "django.middleware.clickjacking.XFrameOptionsMiddleware",
+    "allauth.account.middleware.AccountMiddleware",
     "simple_history.middleware.HistoryRequestMiddleware",
 ]
 
@@ -120,7 +128,7 @@ ROOT_URLCONF = "projectBaseline.urls"
 TEMPLATES = [
     {
         "BACKEND": "django.template.backends.django.DjangoTemplates",
-        "DIRS": [os.path.join(BASE_DIR, "projectBaseline/templates")],
+        "DIRS": [os.path.join(BASE_DIR, "templates")],
         "APP_DIRS": True,
         "OPTIONS": {
             "context_processors": [
@@ -134,6 +142,7 @@ TEMPLATES = [
 ]
 
 WSGI_APPLICATION = "projectBaseline.wsgi.application"
+SITE_ID = 1
 
 # Password validation
 # https://docs.djangoproject.com/en/5.0/ref/settings/#auth-password-validators
@@ -152,7 +161,20 @@ AUTH_PASSWORD_VALIDATORS = [
         "NAME": "django.contrib.auth.password_validation.NumericPasswordValidator",
     },
 ]
+
+# Authentication settings
 AUTH_USER_MODEL = "login.UserAccount"
+
+ACCOUNT_EMAIL_REQUIRED = True
+ACCOUNT_USERNAME_REQUIRED = False
+ACCOUNT_SIGNUP_PASSWORD_ENTER_TWICE = False
+ACCOUNT_SESSION_REMEMBER = True
+ACCOUNT_AUTHENTICATION_METHOD = 'email'
+ACCOUNT_UNIQUE_EMAIL = True
+
+LOGIN_URL = 'login'
+LOGIN_REDIRECT_URL = 'dashboard:home_page'
+LOGOUT_URL = 'logout'
 
 # Internationalization
 # https://docs.djangoproject.com/en/5.0/topics/i18n/
@@ -169,11 +191,11 @@ USE_TZ = True
 # Static files (CSS, JavaScript, Images)
 # https://docs.djangoproject.com/en/5.0/howto/static-files/
 
-STATIC_URL = "static/"
-STATIC_ROOT = "static"
+STATIC_URL = "/static/"
+STATIC_ROOT = os.path.join(BASE_DIR, "static")
 
-MEDIA_URL = "media/"
-MEDIA_ROOT = "media"
+MEDIA_URL = "/media/"
+MEDIA_ROOT = os.path.join(BASE_DIR, "media")
 
 MESSAGE_TAGS = {
     messages.DEBUG: "info",
@@ -249,3 +271,7 @@ if USE_SMTP:
     EMAIL_HOST_PASSWORD = env.str('EMAIL_HOST_PASSWORD', default='')
     EMAIL_PORT = env.int('EMAIL_PORT', default=587)
     EMAIL_USE_TLS = env.bool('EMAIL_USE_TLS', default=True)
+
+BOOTSTRAP4 = {
+    'include_jquery': True,
+}
