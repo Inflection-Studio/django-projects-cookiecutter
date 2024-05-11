@@ -11,7 +11,7 @@
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/4.7.0/css/font-awesome.min.css"
           integrity="sha256-eZrrJcwDc/3uDhsdt61sL2oOBY362qM3lon1gyExkL0=" crossorigin="anonymous" />
     <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.3.1/css/bootstrap.min.css">
-    <title>{% block title %}Log In{% endblock %} | Baseline Group Realtors </title>
+    <title>{% block title %}Log In{% endblock %} | {{ site.name }} </title>
     <style>
         .auth-bg {
             background-image: url('/static/img/auth-bg.jpg');
@@ -31,7 +31,7 @@
             <div class="card shadow-sm mt-5">
                 <div class="card-body px-4">
                     <div class="text-center pb-2">
-                        <img src="{% static 'img/logo.svg'  %}" alt="Payo Group Realtors logo" class="py-3" width="200">
+                        <img src="{% static 'img/logo.svg'  %}" alt="{{ site.name }} logo" class="py-3" width="200">
                     </div>
                     <hr>
                     {% block content %}Log In{% endblock %}

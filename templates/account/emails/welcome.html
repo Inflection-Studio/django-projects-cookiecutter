@@ -200,7 +200,7 @@
                                             <div
                                                 style="font-family:'Helvetica Neue',Arial,sans-serif;font-size:14px;line-height:20px;text-align:left;color:black;">
                                                 Hello {{ user }},<br></br>
-                                                Welcome to  {{site_name}}. Your account has been created
+                                                Welcome to  {{ site_name }}. Your account has been created
                                                 successful. To Login to your account use the following credentials:
                                                 <p class="text-center" style="font-weight:600">Email: {{ user.email }}</p>
                                                 <p class="text-center" style="font-weight:600">Password: {{ password }}
@@ -222,7 +222,7 @@
                                                         valign="middle">
                                                         <p
                                                             style="color:#ffffff;font-family:'Helvetica Neue',Arial,sans-serif;font-size:15px;font-weight:normal;line-height:120%;Margin:0;text-decoration:none;text-transform:none;">
-                                                            <a href="{{protocol}}//{{site.domain}}" style="color:#ffffff;">
+                                                            <a href="{{protocol}}//{{ site.domain }}" style="color:#ffffff;">
                                                                 Login to Your Account</a>
                                                         </p>
                                                     </td>

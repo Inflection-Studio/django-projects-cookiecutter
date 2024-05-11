@@ -1,0 +1,117 @@
+<div class="left-nav-wrap custom-left-nav-wrap">
+  <div class="left-sidebar">
+      <nav class="sidebar-menu side-nav-menu custom-sidebar-menu">
+          <ul id="nav-accordion">
+              <li class="sub-menu">
+                  <a href="{% url 'dashboard:home_page' %}" class="{% if request.path == '/' %}active{% endif %}">
+                      <i class="ti-dashboard"></i>
+                      <span>Dashboard</span>
+                  </a>
+              </li>
+              <li class="sub-menu">
+                  <a href="#" class="{% if '/properties/' in request.path %}active{% endif %}">
+                      <i class="icon-basket-loaded"></i>
+                      <span>Menu with sub items</span>
+                  </a>
+                  <ul class="sub">
+                      <li class="#">
+                          <a href="">Sub Item 1</a>
+                      </li>
+                  </ul>
+                <ul class="sub">
+                      <li class="#">
+                          <a href="">Sub Item two</a>
+                      </li>
+                  </ul>
+              </li>
+              <li class="sub-menu">
+                <a href=""
+                    class="{% if '/property-enquiries/' in request.path %}active{% endif %}">
+                    <i class="ti-write"></i>
+                    <span>Enquiries</span>
+                </a>
+            </li>
+              <li class="sub-menu">
+                <a href=""
+                    class="{% if '/listing-requests/' in request.path %}active{% endif %}">
+                    <i class="ti-ink-pen"></i>
+                    <span>Menu Without Sub Items 1</span>
+                </a>
+            </li>
+              <li class="sub-menu">
+                <a href=""
+                    class="{% if '/features/' in request.path %}active{% endif %}">
+                    <i class="ti-bookmark-alt"></i>
+                    <span>Menu Without Sub Items 1</span>
+                </a>
+            </li>
+
+            {% if request.user.is_superuser or request.user.role == 'Admin' %}
+
+            {% comment %}
+            <li class="sub-menu">
+                <a href="#" class="{% if 'careers' in request.path %}active{% endif %}">
+                    <i class="ti-agenda"></i>
+                    <span>Careers and Tenders</span>
+                </a>
+                <ul class="sub">
+                    <li class="{% if 'careers' in request.path %}active{% endif %}">
+                        <a href="{% url 'core:dashboard:careers:careers_list' %}">Careers</a>
+                    </li>
+                    <li class="{% if 'tenders' in request.path %}active{% endif %}">
+                        <a href="{% url 'core:dashboard:tenders:tenders_list' %}">Tenders</a>
+                    </li>
+                </ul>
+            </li>
+            {% endcomment %}
+              <li class="sub-menu">
+                  <a href="" class="{% if 'about-us' in request.path == '/' %}active{% endif %}">
+                      <i class="ti-info"></i>
+                      <span>About</span>
+                  </a>
+              </li>
+              {% comment %}
+              <li class="sub-menu">
+                  <a href="" class="{% if 'news-letter' in request.path == '/' %}active{% endif %}">
+                      <i class="fa fa-folder-open"></i>
+                      <span>Mailing List</span>
+                  </a>
+              </li>
+              {% endcomment %}
+              <li class="sub-menu">
+                <a href="#" class="{% if 'users' in request.path %}active{% endif %}">
+                    <i class="ti-settings"></i>
+                    <span>System Admin</span>
+                </a>
+                <ul class="sub">
+                    <li class="{% if 'staff' in request.path %}active{% endif %}">
+                        <a href="">All Staff</a>
+                    </li>
+                    <li class="{% if request.path == '/staff/new/' %}active{% endif %}">
+                        <a href="">Add Staff</a>
+                    </li>
+                </ul>
+            </li>
+              {% endif %}
+              {% comment %}
+              <li class="sub-menu">
+                <a
+                  href="#"
+                  class="{% if 'accounts/' in request.path %}active{% endif %}"
+                >
+                  <i class="ti-info"></i>
+                  <span>Account</span>
+                </a>
+                <ul class="sub">
+                  <li
+                    class="{% if 'accounts/password-change/' in request.path %}active{% endif %}"
+                  >
+                    <a href="{% url 'password_update' %}">Password Reset</a>
+                  </li>
+                </ul>
+              </li>
+              {% endcomment %}
+          </ul>
+      </nav>
+  </div>
+</div>

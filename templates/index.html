@@ -1,0 +1,122 @@
+{% extends 'base.html' %}
+{% load humanize %}
+
+
+{% block content %}
+<nav aria-label="breadcrumb mb-2">
+    <ol class="breadcrumb">
+        <li class="breadcrumb-item"><a href="">{{ site.name }}</a></li>
+        <li class="breadcrumb-item active" aria-current="page">Dashboard</li>
+    </ol>
+</nav>
+
+<div class="row">
+    <div class="col-xl-3 col-sm-6">
+        <div class="card mb-4 bg-white rounded-border">
+            <div class="card-body">
+                <div class="media d-flex align-items-center">
+                    <div class="mr-4 rounded-circle bg-brand sr-icon-box text-white">
+                        <i class="ti-search"></i>
+                    </div>
+                    <div class="media-body text-dark">
+                        <h4 class="text-uppercase mb-0 weight-500">1</h4>
+                        <span>Placeholder analytics 1</span>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+    <div class="col-xl-3 col-sm-6">
+        <div class="card mb-4 bg-white rounded-border">
+            <div class="card-body">
+                <div class="media d-flex align-items-center">
+                    <div class="mr-4 rounded-circle bg-brand sr-icon-box text-white">
+                        <i class="ti-home"></i>
+                    </div>
+                    <div class="media-body text-dark">
+                        <h4 class="text-uppercase mb-0 weight-500">2</h4>
+                        <span>Placeholder analytics 2</span>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+    <div class="col-xl-3 col-sm-6">
+        <div class="card mb-4 bg-white rounded-border">
+            <div class="card-body">
+                <div class="media d-flex align-items-center ">
+                    <div class="mr-4 rounded-circle bg-brand sr-icon-box text-white">
+                        <i class="ti-user"></i>
+                    </div>
+                    <div class="media-body text-dark">
+                        <h4 class="text-uppercase mb-0 weight-600">3 </h4>
+                        <span>Placeholder analytics 3</span>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+    <div class="col-xl-3 col-sm-6">
+        <div class="card mb-4 bg-white rounded-border">
+            <div class="card-body">
+                <div class="media d-flex align-items-center">
+                    <div class="mr-4 rounded-circle bg-brand  sr-icon-box text-white">
+                        <i class="ti-location-arrow"></i>
+                    </div>
+                    <div class="media-body text-dark">
+                        <h4 class="text-uppercase mb-0 weight-600">4</h4>
+                        <span>Placeholder analytics 4</span>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<div class="row">
+    <div class="col-md-12">
+        <div class="card shadow-sm mb-3 rounded-border">
+            <div class="card-body justify-content-center">
+                <h3 class="text-center py-3 weight-600">Recently Listed Items</h3>
+                <div class="table-responsive table-responsive-sm">
+                    <table class="table table-striped">
+                        <thead>
+                        <tr>
+                            <th>Name</th>
+                            <th>Added by</th>
+                            <th>Location</th>
+                            <th>Price</th>
+                            <th>Added at</th>
+                            <th>Status</th>
+                            <th>Action</th>
+                        </tr>
+                        </thead>
+                        <tbody>
+                        {% for item in items %}
+                        <tr>
+                            <td>{{item.name}}</td>
+                            <td>{{item.added_by.get_full_name}}</td>
+                            <td>{{ item.location }}</td>
+                            <td>{{item.price | intcomma }}</td>
+                            <td>{{item.created | timesince }}</td>
+                            {% if item.status == 'lease' %}
+                            <td><span class="badge badge-warning">Leased</span></td>
+                            {% elif item.status == 'for sale' %}
+                            <td><span class="badge badge-info">For Sale</span></td>
+                            {% else %}
+                            <td><span class="badge badge-success">Sold</span></td>
+                            {% endif%}
+                            <td>
+                                <a class="text-brand"
+                                   href="">View</a>
+                            </td>
+                        </tr>
+                        {% endfor %}
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}
