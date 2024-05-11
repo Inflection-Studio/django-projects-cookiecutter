@@ -135,18 +135,6 @@ TEMPLATES = [
 
 WSGI_APPLICATION = "projectBaseline.wsgi.application"
 
-
-# Database
-# https://docs.djangoproject.com/en/5.0/ref/settings/#databases
-
-DATABASES = {
-    "default": {
-        "ENGINE": "django.db.backends.sqlite3",
-        "NAME": "db.sqlite3",
-    }
-}
-
-
 # Password validation
 # https://docs.djangoproject.com/en/5.0/ref/settings/#auth-password-validators
 
@@ -243,3 +231,21 @@ SPECTACULAR_SETTINGS = {
 
 # martor settings (markdown editor)
 MARTOR_THEME = "bootstrap"
+
+# Email settings
+DEFAULT_EMAIL_DOMAIN = env('DEFAULT_EMAIL_DOMAIN', default='@projectBaseline.com')
+SUPPORT_FROM_NAME = env('SUPPORT_FROM_NAME', default='Project Baseline Support')
+SUPPORT_FROM_EMAIL_NAME = env('SUPPORT_FROM_EMAIL_NAME', default='support')
+SUPPORT_REPLY_TO_EMAIL_NAME = env('SUPPORT_REPLY_TO_EMAIL_NAME', default='support')
+
+DEFAULT_FROM_EMAIL = SUPPORT_FROM_EMAIL_NAME + DEFAULT_EMAIL_DOMAIN
+
+USE_SMTP = env.bool('USE_SMTP', default=False)
+
+if USE_SMTP:
+    EMAIL_BACKEND = 'django.core.mail.backends.smtp.EmailBackend'
+    EMAIL_HOST = env.str('EMAIL_HOST', default='smtp.sendgrid.net')
+    EMAIL_HOST_USER = env.str('EMAIL_HOST_USER', default='apikey')
+    EMAIL_HOST_PASSWORD = env.str('EMAIL_HOST_PASSWORD', default='')
+    EMAIL_PORT = env.int('EMAIL_PORT', default=587)
+    EMAIL_USE_TLS = env.bool('EMAIL_USE_TLS', default=True)
