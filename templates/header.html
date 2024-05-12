@@ -23,9 +23,12 @@
             <i class="fa fa-user"></i> {{ request.user.get_full_name }}
         </li>
         <li class="nav-item sm-device-none">
-            <a href="{% url 'logout' %}">
+            <form method="post" action="{% url 'logout' %}">
+            {% csrf_token %}
+            <button class="btn btn-sm btn-primary" type="submit">
                 <i class="fa fa-sign-out"></i> Logout
-            </a>
+            </button>
+            </form>
         </li>
     </ul>
 </header>

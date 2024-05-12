@@ -1,0 +1,74 @@
+{% extends 'base.html' %}
+{% load static %}
+
+{% block title %}
+staff
+{% endblock %}
+
+{% block styles %}
+<link href="{% static 'vendor/data-tables/dataTables.bootstrap4.min.css' %}" rel="stylesheet">
+{% endblock %}
+
+{% block content %}
+
+<nav aria-label="breadcrumb mb-2">
+    <ol class="breadcrumb">
+      <li class="breadcrumb-item"><a href="{% url 'dashboard:home_page' %}">{{ site.name }}</a></li>
+      <li class="breadcrumb-item active" aria-current="page">Staff</li>
+    </ol>
+</nav>
+
+<div class="row">
+    <div class="col-md-12">
+        <div class="card shadow-sm rounded-border">
+            <div class="card-body">
+                <h3 class="text-center py-3">Recently Added staff</h3>
+                <div class="float-right">
+                    <a href="{% url 'dashboard:login:staff_create' %}">
+                        <button class="btn btn-brand text-white btn-sm mb-2">Add staff</button>
+                    </a>
+                </div>
+                <div class="table-responsive table-responsive-sm">
+                    <table class="table table-striped" id="data-table">
+                        <thead>
+                            <tr>
+                                <th>Staff ID</th>
+                                <th>Staff Name</th>
+                                <th>Staff Email</th>
+                                <th>Staff Phone Number</th>
+                                <th>Joined</th>
+                                <th>Action</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            {% for staff in staffs %}
+                            <tr>
+                                <td>#{{staff.id}}</td>
+                                <td>{{staff.get_full_name}}</td>
+                                <td>{{staff.email}}</td>
+                                <td>{{staff.phone_number}}</td>
+                                <td>{{staff.date_joined | timesince}} ago</td>
+                                <td>
+                                    <a class="text-brand"
+                                        href="{{ staff.get_absolute_url }}">View</a>
+                                </td>
+                            </tr>
+                            {% endfor %}
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}
+
+{% block scripts %}
+<script src="{% static 'vendor/data-tables/jquery.dataTables.min.js' %}"></script>
+<script src="{% static 'vendor/data-tables/dataTables.bootstrap4.min.js' %}"></script>
+<script>
+    $('#data-table').DataTable({
+        "order": []
+    });
+</script>
+{% endblock %}
