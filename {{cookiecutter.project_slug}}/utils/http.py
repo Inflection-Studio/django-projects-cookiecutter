@@ -21,7 +21,7 @@ class {{ cookiecutter.class_name_prefix }}HTTPClient(ABC):
     # Endpoint name to path
     ENDPOINTS = {}
     BASE_URL = None
-    LOG_PREFIX = "bridge_lab.utils.http.{{ cookiecutter.class_name_prefix }}HTTPClient"
+    LOG_PREFIX = "{{ cookiecutter.project_slug }}.utils.http.{{ cookiecutter.class_name_prefix }}HTTPClient"
 
     def __init__(self):
         self.session = requests.Session()
