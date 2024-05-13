@@ -2,7 +2,7 @@
 """
 Live Django settings.
 Meant to be used inside a Docker container or in a live environment.
-Similar to `projectBaseline.conf.settings.local` but with defaults removed.
+Similar to `{{ cookiecutter.project_slug }}.conf.settings.local` but with defaults removed.
 """
 from .common import *
 

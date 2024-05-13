@@ -11,7 +11,7 @@ from urllib3 import Retry
 logger = logging.getLogger(__name__)
 
 
-class ProjectBaseLineHTTPClient(ABC):
+class {{ cookiecutter.class_name_prefix }}HTTPClient(ABC):
     """
     Base class for making HTTP calls using Requests library.
     """
@@ -21,7 +21,7 @@ class ProjectBaseLineHTTPClient(ABC):
     # Endpoint name to path
     ENDPOINTS = {}
     BASE_URL = None
-    LOG_PREFIX = "bridge_lab.utils.http.ProjectBaseLineHTTPClient"
+    LOG_PREFIX = "bridge_lab.utils.http.{{ cookiecutter.class_name_prefix }}HTTPClient"
 
     def __init__(self):
         self.session = requests.Session()

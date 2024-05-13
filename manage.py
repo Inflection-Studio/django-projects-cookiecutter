@@ -8,7 +8,8 @@ def main():
     """Run administrative tasks."""
     environment = os.environ.get("ENVIRONMENT", "local")
     os.environ.setdefault(
-        "DJANGO_SETTINGS_MODULE", f"projectBaseline.conf.settings.{environment}"
+        "DJANGO_SETTINGS_MODULE",
+        f"{{ cookiecutter.project_slug }}.conf.settings.{environment}",  # noqa: E501
     )
     try:
         from django.core.management import execute_from_command_line

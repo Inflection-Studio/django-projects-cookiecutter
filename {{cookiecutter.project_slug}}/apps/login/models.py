@@ -16,13 +16,22 @@ class UserAccount(AbstractUser):
     phone_number = PhoneNumberField(null=True, blank=True)
     bio = models.TextField(verbose_name=_("Bio"), blank=True, null=True)
     history = HistoricalRecords()
+    {%- if cookiecutter.username_type == "email" %}
+    email = models.EmailField(_("Email address"), unique=True)
+    username = None
 
-    objects = CustomUserManager()
-
+    USERNAME_FIELD = "email"
+    REQUIRED_FIELDS = []
+    {%- else %}
     REQUIRED_FIELDS = [
         "first_name",
         "last_name",
     ]
+    {% endif %}
+
+    objects = CustomUserManager()
+
+
 
     class Meta:
         verbose_name = _("User Account")

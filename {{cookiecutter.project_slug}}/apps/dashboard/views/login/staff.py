@@ -3,7 +3,7 @@ from django.utils.crypto import get_random_string
 from django.views.generic import CreateView, DetailView, ListView, UpdateView
 
 from mixins.dashboard import AdminDashBoardMixin
-from projectBaseline.apps.login.utils.email import EmailService
+from {{ cookiecutter.project_slug }}.apps.login.utils.email import EmailService
 
 User = get_user_model()
 

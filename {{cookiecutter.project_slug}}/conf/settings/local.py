@@ -1,7 +1,7 @@
 # flake8: noqa
 """
 Local Django settings.
-Remember to update `projectBaseline.conf.settings.live` if necessary with defaults removed.
+Remember to update `{{ cookiecutter.project_slug }}.conf.settings.live` if necessary with defaults removed.
 """
 from .common import *
 
