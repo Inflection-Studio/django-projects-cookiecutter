@@ -1,9 +1,10 @@
-from django.urls import path
-
-from .views import IndexTemplateView
+from django.urls import include, path
 
 app_name = "dashboard"
 
 urlpatterns = [
-    path("", IndexTemplateView.as_view(), name="home_page"),
+    path("", include("projectBaseline.apps.dashboard.routes.index")),
+    # user urls
+    path("users/", include("projectBaseline.apps.dashboard.routes.login"))
+
 ]

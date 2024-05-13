@@ -77,7 +77,7 @@ DJANGO_APPS = [
     "django.contrib.admin",
     "django.contrib.auth",
     "django.contrib.contenttypes",
-    'django.contrib.humanize',
+    "django.contrib.humanize",
     "django.contrib.sessions",
     "django.contrib.messages",
     "django.contrib.staticfiles",
@@ -169,12 +169,13 @@ ACCOUNT_EMAIL_REQUIRED = True
 ACCOUNT_USERNAME_REQUIRED = False
 ACCOUNT_SIGNUP_PASSWORD_ENTER_TWICE = False
 ACCOUNT_SESSION_REMEMBER = True
-ACCOUNT_AUTHENTICATION_METHOD = 'email'
+ACCOUNT_AUTHENTICATION_METHOD = "email"
 ACCOUNT_UNIQUE_EMAIL = True
 
-LOGIN_URL = 'login'
-LOGIN_REDIRECT_URL = 'dashboard:home_page'
-LOGOUT_URL = 'logout'
+LOGIN_URL = "login"
+LOGIN_REDIRECT_URL = "dashboard:home_page"
+LOGOUT_URL = "logout"
+LOGOUT_REDIRECT_URL = "login"
 
 # Internationalization
 # https://docs.djangoproject.com/en/5.0/topics/i18n/
@@ -255,23 +256,31 @@ SPECTACULAR_SETTINGS = {
 MARTOR_THEME = "bootstrap"
 
 # Email settings
-DEFAULT_EMAIL_DOMAIN = env('DEFAULT_EMAIL_DOMAIN', default='@projectBaseline.com')
-SUPPORT_FROM_NAME = env('SUPPORT_FROM_NAME', default='Project Baseline Support')
-SUPPORT_FROM_EMAIL_NAME = env('SUPPORT_FROM_EMAIL_NAME', default='support')
-SUPPORT_REPLY_TO_EMAIL_NAME = env('SUPPORT_REPLY_TO_EMAIL_NAME', default='support')
+DEFAULT_EMAIL_DOMAIN = env("DEFAULT_EMAIL_DOMAIN", default="@projectBaseline.com")
+SUPPORT_FROM_NAME = env("SUPPORT_FROM_NAME", default="Project Baseline Support")
+SUPPORT_FROM_EMAIL_NAME = env("SUPPORT_FROM_EMAIL_NAME", default="support")
+SUPPORT_REPLY_TO_EMAIL_NAME = env("SUPPORT_REPLY_TO_EMAIL_NAME", default="support")
 
 DEFAULT_FROM_EMAIL = SUPPORT_FROM_EMAIL_NAME + DEFAULT_EMAIL_DOMAIN
+CONTACT_EMAIL_RECIPIENTS = env.list(
+    "CONTACT_EMAIL_RECIPIENTS", default=[SUPPORT_REPLY_TO_EMAIL_NAME]
+)
 
-USE_SMTP = env.bool('USE_SMTP', default=False)
+USE_SMTP = env.bool("USE_SMTP", default=False)
+
+if IS_LOCAL:
+    EMAIL_BACKEND = "django.core.mail.backends.console.EmailBackend"
 
 if USE_SMTP:
-    EMAIL_BACKEND = 'django.core.mail.backends.smtp.EmailBackend'
-    EMAIL_HOST = env.str('EMAIL_HOST', default='smtp.sendgrid.net')
-    EMAIL_HOST_USER = env.str('EMAIL_HOST_USER', default='apikey')
-    EMAIL_HOST_PASSWORD = env.str('EMAIL_HOST_PASSWORD', default='')
-    EMAIL_PORT = env.int('EMAIL_PORT', default=587)
-    EMAIL_USE_TLS = env.bool('EMAIL_USE_TLS', default=True)
+    EMAIL_BACKEND = "django.core.mail.backends.smtp.EmailBackend"
+    EMAIL_HOST = env.str("EMAIL_HOST", default="smtp.sendgrid.net")
+    EMAIL_HOST_USER = env.str("EMAIL_HOST_USER", default="apikey")
+    EMAIL_HOST_PASSWORD = env.str("EMAIL_HOST_PASSWORD", default="")
+    EMAIL_PORT = env.int("EMAIL_PORT", default=587)
+    EMAIL_USE_TLS = env.bool("EMAIL_USE_TLS", default=True)
 
 BOOTSTRAP4 = {
-    'include_jquery': True,
+    "include_jquery": True,
 }
+
+FRONTEND_HOST = env.str("FRONTEND_HOST", default="http://localhost:8000")

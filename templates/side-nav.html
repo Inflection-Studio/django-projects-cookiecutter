@@ -85,10 +85,10 @@
                 </a>
                 <ul class="sub">
                     <li class="{% if 'staff' in request.path %}active{% endif %}">
-                        <a href="">All Staff</a>
+                        <a href="{% url 'dashboard:login:staff_list' %}">All Staff</a>
                     </li>
                     <li class="{% if request.path == '/staff/new/' %}active{% endif %}">
-                        <a href="">Add Staff</a>
+                        <a href="{% url 'dashboard:login:staff_create' %}">Add Staff</a>
                     </li>
                 </ul>
             </li>
