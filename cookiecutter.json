@@ -26,5 +26,14 @@
     "SendinBlue",
     "SparkPost",
     "Other SMTP"
+  ],
+  "_copy_without_render": [
+    "*.js",
+    "*.html",
+    "*.json",
+    "*.map",
+    "Makefile",
+    "*.css"
+
   ]
 }
