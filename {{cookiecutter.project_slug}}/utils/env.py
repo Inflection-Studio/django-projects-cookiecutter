@@ -2,7 +2,7 @@ import environ
 
 
 # Created here so we don't call additional Project Baseline code on server boot.
-class {{ cookiecutter.project_slug }}EnvNoDefaultException(Exception):
+class {{ cookiecutter.class_name_prefix }}EnvNoDefaultException(Exception):
     pass
 
 
