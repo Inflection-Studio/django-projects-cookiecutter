@@ -4,7 +4,9 @@ from django.contrib.auth.models import AbstractUser
 from django.db import models
 from django.urls import reverse
 from django.utils.translation import gettext_lazy as _
+{%- if cookiecutter.use_phone_numbers_field == "y" %}
 from phonenumber_field.modelfields import PhoneNumberField
+{%- endif %}
 from simple_history.models import HistoricalRecords
 
 from .managers import CustomUserManager
@@ -13,7 +15,9 @@ from .managers import CustomUserManager
 # Create your models here.
 class UserAccount(AbstractUser):
     id = models.UUIDField(primary_key=True, default=uuid.uuid4, editable=False)
+    {%- if cookiecutter.use_phone_numbers_field == "y" %}
     phone_number = PhoneNumberField(null=True, blank=True)
+    {%- endif %}
     bio = models.TextField(verbose_name=_("Bio"), blank=True, null=True)
     history = HistoricalRecords()
     {%- if cookiecutter.username_type == "email" %}

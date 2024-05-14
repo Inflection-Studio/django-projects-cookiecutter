@@ -75,11 +75,11 @@ To create a new Django app, run the following command
 
     make app APP_NAME={app_name}
 
-Add the newly created app to the list of `INSTALLED_APPS` on the `projectBaseline.conf.settings.common.py` file
+Add the newly created app to the list of `INSTALLED_APPS` on the `{{cookiecuter.project_slug}}.conf.settings.common.py` file
 under the `LOCAL_APPS_LIST`
 
     LOCAL_APPS = [
-        "projectBaseline.apps.{app_name}.apps.{AppName}Config",
+        "{{cookiecuter.project_slug}}.apps.{app_name}.apps.{AppName}Config",
     ]
 
 ### Running Health Checks
@@ -88,8 +88,8 @@ Health checks have been configured for each service to ensure they are running a
 
 1. Nginx Services
 
-    docker inspect --format='{{json .State.Health}}' project_baseline_web_server
+    docker inspect --format='{{json .State.Health}}' {{cookiecutter.project_slug}}_web_server
 
 2. Postgres Service
 
-    docker inspect --format='{{json .State.Health}}' project_baseline_db
+    docker inspect --format='{{json .State.Health}}' {{cookiecutter.project_slug}}_db

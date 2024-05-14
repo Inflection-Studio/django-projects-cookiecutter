@@ -17,13 +17,13 @@ help:
 	@echo "  show_urls			output all defined program urls on the command line"
 
 
-CONTAINERS := project_baseline_db project_baseline_web_server project_baseline_pg_admin
+CONTAINERS := {{cookiecutter.project_slug}}_db {{cookiecutter.project_slug}}_web_server {{cookiecutter.project_slug}}_pg_admin
 # ANSI escape codes for colors
 GREEN := \033[0;32m
 LIGHT_PURPLE := \033[1;35m
 RESET := \033[0m
 
-PROJECT_NAME := projectBaseline
+PROJECT_NAME := {{cookiecutter.project_slug}}
 APP_NAME :=
 SETTINGS_PY := ${PROJECT_NAME}/conf/settings/common.py
 APP_DIRECTORY := ${PROJECT_NAME}/apps/

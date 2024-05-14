@@ -27,6 +27,9 @@
     "SparkPost",
     "Other SMTP"
   ],
+  "use_drf": "n",
+  "use_martor_editor": "n",
+  "use_phone_numbers_field": "n",
   "_copy_without_render": [
     "*.js",
     "*.html",

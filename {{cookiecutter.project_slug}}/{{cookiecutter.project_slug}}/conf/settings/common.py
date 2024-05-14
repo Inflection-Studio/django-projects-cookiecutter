@@ -91,14 +91,20 @@ THIRD_PARTY_APPS = [
     "allauth.account",
     "bootstrap4",
     "bootstrap_datepicker_plus",
-    "corsheaders",
     "django_extensions",
     "django_filters",
+    {%- if cookiecutter.use_phone_numbers_field == 'y' %}
+    "phonenumber_field",
+    {%- endif %}
+    {%- if cookiecutter.use_martor_editor == 'y' %}
+    "martor",
+    {%- endif %}
+    {%- if cookiecutter.use_drf == "y" %}
+    "corsheaders",
+    "rest_framework",
     "drf_spectacular",
     "drf_spectacular_sidecar",
-    "phonenumber_field",
-    "martor",
-    "rest_framework",
+    {%- endif %}
     "simple_history",
     "widget_tweaks",
 ]
@@ -111,7 +117,9 @@ LOCAL_APPS = [
 INSTALLED_APPS = DJANGO_APPS + THIRD_PARTY_APPS + LOCAL_APPS
 
 MIDDLEWARE = [
+    {%- if cookiecutter.use_drf == "y" %}
     "corsheaders.middleware.CorsMiddleware",
+    {%- endif %}
     "django.middleware.security.SecurityMiddleware",
     "django.contrib.sessions.middleware.SessionMiddleware",
     "django.middleware.common.CommonMiddleware",
@@ -206,14 +214,18 @@ MESSAGE_TAGS = {
     messages.ERROR: "error",
 }
 
-# Phone number validator
-PHONENUMBER_DEFAULT_REGION = "KE"
 # Default primary key field type
 # https://docs.djangoproject.com/en/5.0/ref/settings/#default-auto-field
 
 DEFAULT_AUTO_FIELD = "django.db.models.BigAutoField"
 SHELL_PLUS = "ipython"
 
+{%- if cookiecutter.use_phone_numbers_field == "y" %}
+# Phone number validator
+PHONENUMBER_DEFAULT_REGION = "KE"
+{%- endif %}
+
+{%- if cookiecutter.use_drf == "y" %}
 # REST framework configuration
 DEFAULT_RENDERER_CLASSES = ("rest_framework.renderers.JSONRenderer",)
 
@@ -251,9 +263,12 @@ SPECTACULAR_SETTINGS = {
     "SWAGGER_UI_FAVICON_HREF": "SIDECAR",
     "REDOC_DIST": "SIDECAR",
 }
+{%- endif %}
 
+{%- if cookiecutter.use_martor_editor == 'y' %}
 # martor settings (markdown editor)
 MARTOR_THEME = "bootstrap"
+{%- endif %}
 
 # Email settings
 DEFAULT_EMAIL_DOMAIN = env("DEFAULT_EMAIL_DOMAIN", default="@{{ cookiecutter.project_slug }}.com")
