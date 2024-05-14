@@ -17,7 +17,9 @@ class UserAdmin(UserAdmin):
         (_("Personal info"), {"fields": ("first_name", "last_name")}),
         {% else %}
         (None, {"fields": ("username", "password")}),
-        (_("Personal info"), {"fields": ("first_name", "last_name", "email", {%- if cookiecutter.use_phone_numbers_field == "y" %} "phone_number" {%- endif %} )}),
+        (_("Personal info"), {"fields": ("first_name", "last_name", "email", 
+                                         {%- if cookiecutter.use_phone_numbers_field == "y" %} "phone_number" {%- endif %} 
+                                        )}),
         {% endif %}
         (
             _("Permissions"),

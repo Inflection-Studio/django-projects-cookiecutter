@@ -35,7 +35,7 @@
   "brand_white_color": "#e9f4e9",
   "brand_black_color": "#050404",
   "_copy_without_render": [
-    "{{cookiecutter.project_slug}}/templates/*.html",
+    "*.html",
     "*{{cookiecutter.project_slug}}/apps/dashboard/static/vendor",
     "*.github",
     "*.js",
