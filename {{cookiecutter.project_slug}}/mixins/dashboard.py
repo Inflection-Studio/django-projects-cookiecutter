@@ -1,4 +1,5 @@
 # controls who views the dashboard
+from typing import Any
 from django.contrib import messages
 from django.contrib.auth.mixins import LoginRequiredMixin, UserPassesTestMixin
 from django.contrib.sites.models import Site
@@ -26,9 +27,11 @@ class SuccessMessageMixin:
 class AdminDashBoardMixin(
     LoginRequiredMixin, UserPassesTestMixin, SuccessMessageMixin, ContextMixin, View
 ):
-    extra_context = {
-        "site": Site.objects.get_current(),
-    }
+
+    def get_context_data(self, **kwargs: Any) -> dict[str, Any]:
+        context = super().get_context_data(**kwargs)
+        context["site"] = Site.objects.get_current()
+        return context
 
     def test_func(self):
         user = self.request.user

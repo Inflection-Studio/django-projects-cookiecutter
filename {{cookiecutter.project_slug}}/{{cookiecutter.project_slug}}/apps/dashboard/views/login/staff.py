@@ -16,7 +16,7 @@ class StaffCreateTemplateView(AdminDashBoardMixin, CreateView):
         "first_name",
         "last_name",
         "email",
-        "phone_number",
+        {%- if cookiecutter.use_phone_numbers_field == "y" %} "phone_number", {%- endif %} "
         "is_superuser",
     ]
 
@@ -25,7 +25,6 @@ class StaffCreateTemplateView(AdminDashBoardMixin, CreateView):
         random_password = get_random_string(length=7)
 
         user = form.save(commit=False)
-        user.username = user.email
         user.set_password(random_password)
         user.is_staff = True
         user.is_active = True
@@ -55,7 +54,7 @@ class StaffUpdateTemplateView(AdminDashBoardMixin, UpdateView):
         "first_name",
         "last_name",
         "email",
-        "phone_number",
+        {%- if cookiecutter.use_phone_numbers_field == "y" %} "phone_number", {%- endif %} 
         "is_superuser",
         "is_active",
     ]
