@@ -37,7 +37,7 @@
   "_copy_without_render": [
     "{{cookiecutter.project_slug}}/templates/*.html",
     "*{{cookiecutter.project_slug}}/apps/dashboard/static/vendor",
-    "*{{cookiecutter.project_slug}}/.github"
+    "*{{cookiecutter.project_slug}}/.github",
     "*.js",
     "*.json",
     "*.map"
