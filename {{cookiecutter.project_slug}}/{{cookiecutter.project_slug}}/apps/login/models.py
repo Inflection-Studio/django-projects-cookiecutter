@@ -23,15 +23,14 @@ class UserAccount(AbstractUser):
     {%- if cookiecutter.username_type == "email" %}
     email = models.EmailField(_("Email address"), unique=True)
     username = None
-
+    
     USERNAME_FIELD = "email"
-    REQUIRED_FIELDS = []
-    {%- else %}
+    {% endif %}
+
     REQUIRED_FIELDS = [
         "first_name",
         "last_name",
     ]
-    {% endif %}
 
     objects = CustomUserManager()
 

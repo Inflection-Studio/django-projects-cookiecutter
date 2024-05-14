@@ -16,7 +16,7 @@ class StaffCreateTemplateView(AdminDashBoardMixin, CreateView):
         "first_name",
         "last_name",
         "email",
-        {%- if cookiecutter.use_phone_numbers_field == "y" %} "phone_number", {%- endif %} "
+        {%- if cookiecutter.use_phone_numbers_field == "y" %} "phone_number", {%- endif %}
         "is_superuser",
     ]
 
