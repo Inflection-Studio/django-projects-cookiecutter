@@ -47,7 +47,7 @@ Edit Staff
                     {% endif %}
                     <div class="col-md-10 mx-auto">
                         <form method="post" enctype="multipart/form-data">
-                            {% csrf_token %}
+                            {%csrf_token%}
                             {% include 'partials/form-half.html' %}
                             {{ form.media }}
                             <div class="py-3 text-center">
