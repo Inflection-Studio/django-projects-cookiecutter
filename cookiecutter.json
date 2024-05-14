@@ -5,7 +5,7 @@
   "class_name_prefix": "MyAwesome",
   "author_name": "Lewis Kori Kihiu",
   "domain_name": "example.com",
-  "email": "{{ cookiecutter.author_name.lower() | trim() |replace(' ', '-') }}@{{ cookiecutter.domain_name.lower() | trim() }}",
+  "author_email": "{{ cookiecutter.author_name.lower() | trim() |replace(' ', '-') }}@{{ cookiecutter.domain_name.lower() | trim() }}",
   "version": "0.1.0",
   "open_source_license": [
     "MIT",
@@ -32,11 +32,9 @@
   "use_phone_numbers_field": "n",
   "_copy_without_render": [
     "*.js",
-    "*.html",
+    "{{cookiecutter.project_slug}}/templates/*.html",
+    "*{{cookiecutter.project_slug}}/apps/dashboard/static/vendor",
     "*.json",
-    "*.map",
-    "Makefile",
-    "*.css"
-
+    "*.map"
   ]
 }
