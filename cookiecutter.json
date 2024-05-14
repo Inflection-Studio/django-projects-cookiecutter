@@ -1,0 +1,45 @@
+{
+  "project_name": "My Awesome Project",
+  "project_slug": "{{ cookiecutter.project_name.lower()|replace(' ', '_')|replace('-', '_')|replace('.', '_')|trim()}}",
+  "project_description": "A short description of the project",
+  "class_name_prefix": "MyAwesome",
+  "author_name": "Lewis Kori Kihiu",
+  "domain_name": "example.com",
+  "author_email": "{{ cookiecutter.author_name.lower() | trim() |replace(' ', '-') }}@{{ cookiecutter.domain_name.lower() | trim() }}",
+  "version": "0.1.0",
+  "open_source_license": [
+    "MIT",
+    "BSD",
+    "GPLv3",
+    "Apache Software License 2.0",
+    "Not open source"
+  ],
+  "username_type": ["username", "email"],
+  "timezone": "UTC",
+  "mail_service": [
+    "Mailgun",
+    "Amazon SES",
+    "Mailjet",
+    "Mandrill",
+    "Postmark",
+    "Sendgrid",
+    "SendinBlue",
+    "SparkPost",
+    "Other SMTP"
+  ],
+  "use_drf": "n",
+  "use_martor_editor": "n",
+  "use_phone_numbers_field": "n",
+  "brand_primary_color": "#3182ce",
+  "brand_secondary_color": "#319795",
+  "brand_white_color": "#e9f4e9",
+  "brand_black_color": "#050404",
+  "_copy_without_render": [
+    "*.html",
+    "*{{cookiecutter.project_slug}}/apps/dashboard/static/vendor",
+    "*.github",
+    "*.js",
+    "*.json",
+    "*.map"
+  ]
+}

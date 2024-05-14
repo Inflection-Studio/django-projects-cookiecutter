@@ -1,0 +1,72 @@
+{% extends 'base.html' %}
+{% load static %}
+
+{% block title %}
+{% if '/staff/registration/' in request.path %}
+Add Staff
+{% elif '/staff/edit/' in request.path %}
+Edit Staff
+{% endif %}
+{% endblock %}
+
+{% block styles %}
+<script src="{% static 'vendor/jquery/jquery.min.js' %}"></script>
+<script src="{% static 'vendor/jquery-ui/jquery-ui.min.js' %}"></script>
+<script src="{% static 'vendor/popper.min.js' %}"></script>
+<script src="{% static 'vendor/bootstrap/js/bootstrap.min.js' %}"></script>
+<script src="{% static 'vendor/jquery.dcjqaccordion.2.7.js' %}"></script>
+<style>
+    .calendar>table>caption {
+        caption-side: unset;
+    }
+</style>
+{% endblock styles %}
+
+{% block content %}
+<nav aria-label="breadcrumb mb-2">
+    <ol class="breadcrumb">
+      <li class="breadcrumb-item"><a href="{% url 'dashboard:home_page' %}">{{site.name}}</a></li>
+      <li class="breadcrumb-item"><a href="{% url 'dashboard:login:staff_list' %}">Staff</a></li>
+      <li class="breadcrumb-item active" aria-current="page">
+          {% if 'edit' in request.path %}
+          Edit
+          {% else %} Add
+         {% endif %}
+         Staff</li>
+    </ol>
+</nav>
+
+    <div class="row">
+        <div class="col-md-12">
+            <div class="card shadow-sm rounded-border">
+                <div class="card-body">
+                    {% if '/staff/new/' in request.path %}
+                    <h4 class="text-center py-3">Add Staff</h4>
+                    {% elif '/staff/edit/' in request.path %}
+                    <h4 class="text-center py-3">Edit Staff</h4>
+                    {% endif %}
+                    <div class="col-md-10 mx-auto">
+                        <form method="post" enctype="multipart/form-data">
+                            {%csrf_token%}
+                            {% include 'partials/form-half.html' %}
+                            {{ form.media }}
+                            <div class="py-3 text-center">
+                                {% if '/staff/new/' in request.path %}
+                                <button class="btn btn-primary">Add Staff</button>
+                                {% elif '/staff/edit/' in request.path %}
+                                <button class="btn btn-primary">Edit Staff</button>
+                                {% endif %}
+                            </div>
+                        </form>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+{% endblock content %}
+
+{% comment %}{% block scripts %}
+<script src="http://code.jquery.com/ui/1.10.2/jquery-ui.min.js" type="text/javascript"></script>
+<script type="text/javascript" src="//netdna.bootstrapcdn.com/bootstrap/3.1.0/js/bootstrap.min.js"></script>
+<script src="https://ajax.googleapis.com/ajax/libs/jquery/3.4.1/jquery.min.js"></script>
+{% endblock scripts %}{% endcomment %}

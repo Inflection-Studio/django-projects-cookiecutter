@@ -1,0 +1,62 @@
+:root {
+  --brand-primary: {{ cookiecutter.brand_primary_color }};
+  --brand-secondary: {{ cookiecutter.brand_secondary_color }};
+  --brand-white: {{ cookiecutter.brand_white_color }};
+  --brand-black: {{ cookiecutter.brand_black_color }};
+}
+
+.btn-brand {
+  background-color: var(--brand-primary) !important;
+  border-color: var(--brand-primary) !important;
+}
+.text-brand {
+  color: var(--brand-primary);
+}
+.bg-brand {
+  background-color: var(--brand-primary) !important;
+}
+.side-nav-menu {
+  background: var(--brand-white) !important;
+}
+.custom-sidebar-menu ul li a {
+  color: var(--brand-black) !important;
+}
+.custom-sidebar-menu ul li a.active,
+.custom-sidebar-menu ul li a:hover,
+.custom-sidebar-menu ul li a:focus {
+  color: var(--brand-white) !important;
+  background: var(--brand-secondary) !important;
+}
+
+.custom-sidebar-menu ul li ul.sub li {
+  background: var(--brand-white) !important;
+}
+.custom-left-nav-wrap {
+  color: var(--brand-white) !important;
+}
+.custom-left-nav-wrap::before {
+  color: var(--brand-white) !important;
+}
+.rounded-border {
+  border-radius: 0.9rem !important;
+}
+
+.dz {
+  border: dashed !important;
+  border-color: var(--brand-primary) !important;
+  border-radius: 0.8rem !important;
+}
+
+.dz:hover {
+  background-color: var(--brand-secondary) !important;
+}
+.folder-icon {
+  font-size: 5rem;
+}
+.folder-icon:hover {
+  font-size: 6rem;
+}
+.nav-pills .nav-link.active {
+  background-color: var(--brand-primary) !important;
+  color: white !important;
+}

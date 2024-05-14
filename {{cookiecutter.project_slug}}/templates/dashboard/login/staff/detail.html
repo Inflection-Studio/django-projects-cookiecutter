@@ -1,0 +1,124 @@
+{% extends 'base.html' %}
+{% load static %}
+{% load humanize %}
+
+{% block title %}
+staff Details - {{ staff.get_full_name }}
+{% endblock %}
+
+
+{% block content %}
+<nav aria-label="breadcrumb mb-2">
+    <ol class="breadcrumb">
+      <li class="breadcrumb-item"><a href="{% url 'dashboard:home_page' %}">{{ site.name }}</a></li>
+      <li class="breadcrumb-item"><a href="{% url 'dashboard:login:staff_list' %}">Staff</a></li>
+      <li class="breadcrumb-item active" aria-current="page">{{ staff.get_full_name }}</li>
+    </ol>
+</nav>
+
+<div class="row mb-4">
+    <div class="col-md-12">
+        <div class="card shadow-sm rounded-border">
+            <div class="card-body">
+                <h5 class="text-center py-4"> {{ staff.get_full_name }} </h5>
+                <div class="row">
+                    <div class="col-md-4 text-center">
+                        <img src="{% static 'img/progress.svg' %}" class="card-img-top" class="w-75">
+                        <div class="py-3">
+                            <a href="{% url 'dashboard:login:staff_update' pk=staff.pk %}">
+                                <button class="btn btn-brand text-white btn-sm mx-1">Edit</button>
+                            </a>
+                        </div>
+                    </div>
+                    <div class="table-responsive col-md-8 shadow-sm">
+                        <table class="table table-striped">
+                            <tbody>
+                                <tr>
+                                    <th>Full Names</th>
+                                    <td>{{ staff.get_full_name }}</td>
+                                </tr>
+                                <tr>
+                                    <th>Contact</th>
+                                    {% if staff.phone_number %}
+                                    <td> {{staff.phone_number }} </td>
+                                    {% else %}
+                                    <td><span class="badge badge-pill badge-info">Not provided</span></td>
+                                    {% endif %}
+                                </tr>
+                                <tr>
+                                    <th>Email</th>
+                                    <td>{{ staff.email }}</td>
+                                </tr>
+                                <tr>
+                                    <th>Role</th>
+                                    <td>{{ staff.role }}</td>
+                                </tr>
+                                <tr>
+                                    <th>Status</th>
+                                    {% if staff.is_active  %}
+                                    <td> <span class="badge badge-pill badge-success">Active</span> </td>
+                                    {% else %}
+                                    <td><span class="badge badge-pill badge-danger">Inactive</span></td>
+                                    {% endif %}
+                                </tr>
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+    </div>
+</div>
+
+  <!-- activities list -->
+  <div class="row mb-1">
+    <div class="col-md-12">
+        <div class="card shadow-sm rounded-border">
+            <div class="card-body">
+                <h5 class="text-center py-3 weight-600">Activity name</h5>
+                <div class="table-responsive table-responsive-sm">
+                    <div class="table-responsive table-responsive-sm">
+                        <table class="table table-striped">
+                            <thead>
+                                <tr>
+                                    <th>Name</th>
+                                    <th>Added by</th>
+                                    <th>Price</th>
+                                    <th>Added at</th>
+                                    <th>Status</th>
+                                    <th>Action</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                {% for activity in activities %}
+                                <tr>
+                                    <td>{{activity.name}}</td>
+                                    <td>{{activity.added_by.get_full_name}}</td>
+                                    <td>{{ property.location }}</td>
+                                    <td>{{activity.price | intcomma }}</td>
+                                    <td>{{activity.created | timesince }}</td>
+                                    {% if property.status == 'lease' %}
+                                    <td><span class="badge badge-warning">Leased</span></td>
+                                    {% elif property.status == 'for sale' %}
+                                    <td><span class="badge badge-info">For Sale</span></td>
+                                    {% else %}
+                                    <td><span class="badge badge-success">Sold</span></td>
+                                    {% endif%}
+                                    <td>
+                                        <a class="btn btn-brand btn-sm text-white"
+                                            href="">View</a>
+                                    </td>
+                                </tr>
+                                {% endfor %}
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+<!-- end activities list -->
+
+{% endblock %}
