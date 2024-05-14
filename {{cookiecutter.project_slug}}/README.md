@@ -75,11 +75,11 @@ To create a new Django app, run the following command
 
     make app APP_NAME={app_name}
 
-Add the newly created app to the list of `INSTALLED_APPS` on the `{{cookiecuter.project_slug}}.conf.settings.common.py` file
+Add the newly created app to the list of `INSTALLED_APPS` on the `{{cookiecutter.project_slug}}.conf.settings.common.py` file
 under the `LOCAL_APPS_LIST`
 
     LOCAL_APPS = [
-        "{{cookiecuter.project_slug}}.apps.{app_name}.apps.{AppName}Config",
+        "{{cookiecutter.project_slug}}.apps.{app_name}.apps.{AppName}Config",
     ]
 
 ### Running Health Checks
