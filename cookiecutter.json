@@ -35,9 +35,10 @@
   "brand_white_color": "#e9f4e9",
   "brand_black_color": "#050404",
   "_copy_without_render": [
-    "*.js",
     "{{cookiecutter.project_slug}}/templates/*.html",
     "*{{cookiecutter.project_slug}}/apps/dashboard/static/vendor",
+    "*{{cookiecutter.project_slug}}/.github"
+    "*.js",
     "*.json",
     "*.map"
   ]
