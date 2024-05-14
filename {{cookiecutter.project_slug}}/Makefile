@@ -112,7 +112,7 @@ docker-logs:
 
 .PHONY: container-health-check
 container-health-check:
-	$(foreach container,$(CONTAINERS),echo "$(GREEN)Health Check for $(container):$(RESET)" && echo "$(LIGHT_PURPLE)" && docker inspect --format='{{json .State.Health}}' $(container) && echo "$(RESET)" && echo)
+	$(foreach container,$(CONTAINERS),echo "$(GREEN)Health Check for $(container):$(RESET)" && echo "$(LIGHT_PURPLE)" && docker inspect' $(container) && echo "$(RESET)" && echo)
 
 # Pre-commit hooks
 .PHONY: hooks

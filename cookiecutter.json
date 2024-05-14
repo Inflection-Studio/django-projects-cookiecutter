@@ -30,6 +30,10 @@
   "use_drf": "n",
   "use_martor_editor": "n",
   "use_phone_numbers_field": "n",
+  "brand_primary_color": "#3182ce",
+  "brand_secondary_color": "#319795",
+  "brand_white_color": "#e9f4e9",
+  "brand_black_color": "#050404",
   "_copy_without_render": [
     "*.js",
     "{{cookiecutter.project_slug}}/templates/*.html",

@@ -1,8 +1,8 @@
 :root {
-  --brand-primary: #3182ce;
-  --brand-secondary: #319795;
-  --brand-white: #e9f4e9;
-  --brand-black: #050404;
+  --brand-primary: {{ cookiecutter.brand_primary_color }};
+  --brand-secondary: {{ cookiecutter.brand_secondary_color }};
+  --brand-white: {{ cookiecutter.brand_white_color }};
+  --brand-black: {{ cookiecutter.brand_black_color }};
 }
 
 .btn-brand {
