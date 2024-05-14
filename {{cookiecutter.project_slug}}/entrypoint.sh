@@ -9,7 +9,7 @@ touch /deploy/gunicorn/logs/error.log
 
 # Start Gunicorn processes
 echo Starting Gunicorn.
-exec gunicorn projectBaseline.wsgi:application \
+exec gunicorn {{cookiecutter.project_slug}}.wsgi:application \
     --bind 0.0.0.0:8000 \
     --workers 3 \
     --log-level=info \
