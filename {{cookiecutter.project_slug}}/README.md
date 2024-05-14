@@ -81,15 +81,3 @@ under the `LOCAL_APPS_LIST`
     LOCAL_APPS = [
         "{{cookiecutter.project_slug}}.apps.{app_name}.apps.{AppName}Config",
     ]
-
-### Running Health Checks
-
-Health checks have been configured for each service to ensure they are running and ready to accept connections.
-
-1. Nginx Services
-
-    docker inspect --format='{{json .State.Health}}' {{cookiecutter.project_slug}}_web_server
-
-2. Postgres Service
-
-    docker inspect --format='{{json .State.Health}}' {{cookiecutter.project_slug}}_db
