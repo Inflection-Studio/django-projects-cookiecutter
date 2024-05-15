@@ -1,4 +1,4 @@
 FROM nginx
 
 RUN rm /etc/nginx/conf.d/default.conf
-COPY projectBaseline.conf /etc/nginx/conf.d
+COPY {{cookiecutter.project_slug}}.conf /etc/nginx/conf.d
