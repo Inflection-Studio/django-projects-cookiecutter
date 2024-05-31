@@ -1,6 +1,6 @@
-# Platform
+# {{ cookiecutter.project_name }} Platform
 
-> Main Repository for Backend Web App and API for platform
+> Main Repository for Backend Web App and API for {{ cookiecutter.project_name }} platform
 
 1. [Requirements](#requirements)
 2. [Setup](#setup)
