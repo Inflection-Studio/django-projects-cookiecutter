@@ -243,8 +243,8 @@ REST_FRAMEWORK = {
     "DEFAULT_FILTER_BACKENDS": ("django_filters.rest_framework.DjangoFilterBackend",),
     "DEFAULT_SCHEMA_CLASS": "drf_spectacular.openapi.AutoSchema",
     "DEFAULT_RENDERER_CLASSES": DEFAULT_RENDERER_CLASSES,
-    "DEFAULT_PAGINATION_CLASS": "bridge_lab.common.pagination.ResultsPagination",
-    "DEFAULT_VERSIONING_CLASS": "bridge_lab.common.versioning.BridgelabURLPathVersioning",
+    "DEFAULT_PAGINATION_CLASS": "{{cookiecutter.project_slug}}.common.pagination.ResultsPagination",
+    "DEFAULT_VERSIONING_CLASS": "{{cookiecutter.project_slug}}.common.versioning.{{ cookiecutter.class_name_prefix }}URLPathVersioning",
     "DEFAULT_THROTTLE_CLASSES": [
         "rest_framework.throttling.ScopedRateThrottle",
     ],
