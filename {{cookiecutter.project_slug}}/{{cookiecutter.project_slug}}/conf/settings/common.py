@@ -255,9 +255,9 @@ REST_FRAMEWORK = {
 }
 
 SPECTACULAR_SETTINGS = {
-    "TITLE": "Innovatike Inc API",
-    "DESCRIPTION": "Innovatike Inc API documentation",
-    "VERSION": "1.0.0",
+    "TITLE": "{{ cookiecutter.project_name }} API",
+    "DESCRIPTION": "{{ cookiecutter.project_name }} API documentation",
+    "VERSION": "{{ cookiecutter.version }}",
     "SERVE_INCLUDE_SCHEMA": False,
     "SWAGGER_UI_DIST": "SIDECAR",  # shorthand to use the sidecar instead
     "SWAGGER_UI_FAVICON_HREF": "SIDECAR",
@@ -272,7 +272,7 @@ MARTOR_THEME = "bootstrap"
 
 # Email settings
 DEFAULT_EMAIL_DOMAIN = env("DEFAULT_EMAIL_DOMAIN", default="@{{ cookiecutter.project_slug }}.com")
-SUPPORT_FROM_NAME = env("SUPPORT_FROM_NAME", default="Project Baseline Support")
+SUPPORT_FROM_NAME = env("SUPPORT_FROM_NAME", default="{{ cookiecutter.project_name }} Support")
 SUPPORT_FROM_EMAIL_NAME = env("SUPPORT_FROM_EMAIL_NAME", default="support")
 SUPPORT_REPLY_TO_EMAIL_NAME = env("SUPPORT_REPLY_TO_EMAIL_NAME", default="support")
 
