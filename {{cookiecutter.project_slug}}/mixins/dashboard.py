@@ -1,5 +1,6 @@
 # controls who views the dashboard
 from typing import Any
+
 from django.contrib import messages
 from django.contrib.auth.mixins import LoginRequiredMixin, UserPassesTestMixin
 from django.contrib.sites.models import Site
@@ -38,3 +39,8 @@ class AdminDashBoardMixin(
         if user.is_staff or user.is_superuser:
             return True
         return False
+
+class FormViewDashboardMixin(ContextMixin):
+    def get_context_data(self, **kwargs: Any) -> dict[str, Any]:
+        context = super().get_context_data(**kwargs)
+        return context
