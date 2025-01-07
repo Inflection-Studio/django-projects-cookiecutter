@@ -2,7 +2,7 @@ from decimal import Decimal
 
 from django.contrib import messages
 from django.core.exceptions import ValidationError
-from django.http import HttpRequest, HttpResponse
+from django.http import HttpRequest, HttpResponse, Http404
 from django.shortcuts import get_object_or_404, redirect
 from django.utils import timezone
 from django.utils.crypto import get_random_string
@@ -15,21 +15,64 @@ from .fields import Publishable
 class InvalidContentTypeError(TypeError):
 	pass
 
-def unique_slug_generator(instance, new_slug: str = None, field_name: str = "name"):
-    if new_slug is not None:
-        slug = new_slug
-    else:
-        random_string = get_random_string(length=6)
-        slug = slugify(f"{getattr(instance, field_name)} {random_string}")
-    Klass = instance.__class__
-    max_length = Klass._meta.get_field("slug").max_length
-    slug = slug[:max_length]
-    qs_exists = Klass.objects.filter(slug=slug).exists()
 
-    if qs_exists:
-        new_slug = f"{slug[:max_length - 5]}-{get_random_string(length=6)}"
-        return unique_slug_generator(instance, new_slug=new_slug)
-    return slug
+class BooleanStatusBadgeUtility:
+	badge_classes = {
+		True: "badge badge-pill badge-success",
+		False: "badge badge-pill badge-danger",
+	}
+
+	@classmethod
+	def get_badge_class(cls, status):
+		return cls.badge_classes.get(status, "badge badge-pill badge-light")
+
+def upload_to_directory(instance, filename):
+	"""
+	Define a custom upload path based on the model name.
+	"""
+	model_name = (
+		instance.__class__.__name__.lower()
+	)  # Get the model name (e.g., 'blog', 'event', etc.)
+	return f"{model_name}s/cover_images/{filename}"
+
+
+def unique_slug_generator(instance, new_slug: str = None, field_names: list = None):
+	"""
+	Generate a unique slug for a model instance.
+
+	:param instance: The model instance for which to generate the slug.
+	:param new_slug: An optional predefined slug.
+	:param field_names: A list of field names to be concatenated for slug generation.
+	:return: A unique slug string.
+	"""
+	if new_slug is not None:
+		slug = new_slug
+	else:
+		if field_names is None or not field_names:
+			field_names = [
+				"title"
+			]  # Default to the "title" field if none are specified
+
+		# Combine the values of the specified fields and add a random string
+		field_values = [str(getattr(instance, field, "")) for field in field_names]
+		combined_fields = " ".join(filter(None, field_values))
+		random_string = get_random_string(length=6)
+		slug = slugify(f"{combined_fields} {random_string}")
+
+	# Trim slug to fit the maximum length of the slug field
+	Klass = instance.__class__
+	max_length = Klass._meta.get_field("slug").max_length
+	slug = slug[:max_length]
+
+	# Ensure uniqueness
+	qs_exists = Klass.objects.filter(slug=slug).exists()
+	if qs_exists:
+		new_slug = f"{slug[:max_length - 5]}-{get_random_string(length=6)}"
+		return unique_slug_generator(
+			instance, new_slug=new_slug, field_names=field_names
+		)
+
+	return slug
 
 
 def get_average_review_rating(reviews) -> Decimal:
@@ -89,6 +132,13 @@ def get_status_action_map() -> dict[str, list[dict]]:
 	}
 	return status_action_map
 
+def get_delete_view_action() -> dict:
+	return {
+		"action": "delete",
+		"label": "Delete",
+		"btn_class": "btn-danger",
+		"is_delete": True,
+	}
 
 def unpublish_publishable_content(
 	request,
@@ -149,7 +199,7 @@ def draft_publishable_content(
 	return redirect(publishable_content.get_absolute_url())
 
 
-def handle_publishable_content_action(
+def process_publication_state_change(
 	request: HttpRequest,
 	action: str,
 	model_class: "models.Model",
@@ -198,3 +248,40 @@ def handle_publishable_content_action(
 
 	# Perform the action
 	return action_function(request, publishable_content)
+
+
+
+def route_publication_action(request, action: str, pk: str | int, model_class):
+	"""
+	Generic view to handle actions (publish, unpublish, archive, draft) for publishable models.
+
+	Args:
+		request: The HTTP request object.
+		action: The action to perform, derived from the URL.
+		pk: The primary key of the object.
+		model_class: The model class to operate on.
+
+	Returns:
+		HTTP Response from the handle_publishable_content_action function.
+
+	Raises:
+		Http404: If the action is not valid.
+	"""
+	# Map PublicationActions dynamically
+	valid_actions = {
+		action.value: action for action in common_db_constants.PublicationActions
+	}
+
+	# Validate the action
+	if action not in valid_actions:
+		raise Http404(f"Invalid action {action!r}.")
+
+	# Call the handler with the derived action
+	return process_publication_state_change(
+		request=request,
+		action=valid_actions[action],
+		model_class=model_class,
+		pk=pk,
+	)
+
+
