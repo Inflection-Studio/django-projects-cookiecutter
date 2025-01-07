@@ -1,4 +1,3 @@
-# dashboard/navigation/constants.py
 from django.utils.translation import gettext_lazy as _
 
 # Icons

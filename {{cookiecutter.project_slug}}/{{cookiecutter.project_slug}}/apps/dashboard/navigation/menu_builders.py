@@ -1,4 +1,3 @@
-# dashboard/navigation/menu_builders.py
 from django.urls import reverse_lazy
 from .sidebar import SidebarItem
 from .constants import *
