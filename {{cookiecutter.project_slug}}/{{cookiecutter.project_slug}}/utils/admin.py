@@ -1,11 +1,12 @@
 from typing import Any
 
-from django.core.exceptions import ValidationError
+from django.contrib import admin
+from django.core.exceptions import PermissionDenied, ValidationError
 from django.urls import exceptions, reverse
 from django.utils.html import format_html, format_html_join
 
 TABLE_EMPTY_FIELD_DASH = "-"
-
+USER_ACCOUNT_MODEL = 'login_useraccount'
 
 class HTMLTagStringGenerators:
     @staticmethod
@@ -101,3 +102,60 @@ class HTMLTagStringGenerators:
             return TABLE_EMPTY_FIELD_DASH
         except exceptions.NoReverseMatch:
             return TABLE_EMPTY_FIELD_DASH
+
+
+class UploadedByAdminMixin(admin.ModelAdmin):
+    readonly_fields = ('uploaded_by',)
+
+    def save_model(self, request, obj, form, change):
+        if not change:
+            obj.uploaded_by = request.user
+        super().save_model(request, obj, form, change)
+
+    def uploaded_by_link(self, obj):
+        return HTMLTagStringGenerators.admin_url(
+            obj_id=obj.uploaded_by_id,
+            model_name=USER_ACCOUNT_MODEL,
+            view_name='change',
+            value=obj.uploaded_by,
+        )
+
+    uploaded_by_link.short_description = 'Uploaded By'
+
+
+class ReadOnlyModelAdmin(admin.ModelAdmin):
+    def changeform_view(
+        self, request, object_id=None, form_url='', extra_context=None
+    ):
+        extra_context = extra_context or {}
+        if request.method == 'POST' and not extra_context.pop(
+            'override_post_permission', False
+        ):
+            raise PermissionDenied
+        extra_context.setdefault('show_save_and_continue', False)
+        extra_context.setdefault('show_save', False)
+        return super().changeform_view(
+            request, object_id, form_url, extra_context
+        )
+
+    def get_actions(self, request):
+        actions = super().get_actions(request)
+        if 'delete_selected' in actions:
+            del actions['delete_selected']
+        return actions
+
+    def get_readonly_fields(self, request, obj=None):
+        return (
+            list(self.readonly_fields)
+            + [field.name for field in obj._meta.fields]
+            + [field.name for field in obj._meta.many_to_many]
+        )  # yapf: disable
+
+    def has_add_permission(self, request, obj=None):
+        return False
+
+    def has_delete_permission(self, request, obj=None):
+        return False
+
+    def has_change_permission(self, request, obj=None):
+        return False

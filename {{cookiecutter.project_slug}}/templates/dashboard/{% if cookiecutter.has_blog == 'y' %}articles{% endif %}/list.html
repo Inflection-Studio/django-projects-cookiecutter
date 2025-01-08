@@ -1,0 +1,157 @@
+{% extends 'base.html' %}
+{% load humanize %}
+{% load static %}
+{% load custom_filters %}
+{% block title%}
+
+{{ title }} All Articles {% endblock %}
+{% block styles %}
+<link
+  rel="stylesheet"
+  href="{% static 'vendor/data-tables/dataTables.bootstrap4.min.css' %}"
+/>
+{% endblock %}
+
+{% block content %}
+<nav aria-label="breadcrumb mb-2">
+    <ol class="breadcrumb">
+      <li class="breadcrumb-item"><a href="{% url 'dashboard:home_page' %}">{{site.name}}</a></li>
+      <li class="breadcrumb-item active"><a href="{% url 'dashboard:articles:article_list' %}">Articles</a></li>
+    </ol>
+</nav>
+
+<div class="row">
+  <div class="col-xl-3 col-sm-6">
+      <div class="card mb-4 bg-white rounded-border">
+          <div class="card-body">
+              <div class="media d-flex align-items-center">
+                  <div class="mr-4 rounded-circle bg-brand sr-icon-box text-white">
+                      <i class="ti-home"></i>
+                  </div>
+                  <div class="media-body text-dark">
+                      <h4 class="text-uppercase mb-0 weight-500">{{ all_articles_count }}</h4>
+                      <span>All Articles</span>
+                  </div>
+              </div>
+          </div>
+      </div>
+  </div>
+  <div class="col-xl-3 col-sm-6">
+    <div class="card mb-4 bg-white rounded-border">
+        <div class="card-body">
+            <div class="media d-flex align-items-center">
+                <div class="mr-4 rounded-circle bg-brand sr-icon-box text-white">
+                    <i class="ti-pencil"></i>
+                </div>
+                <div class="media-body text-dark">
+                    <h4 class="text-uppercase mb-0 weight-500">{{ draft_articles_count }}</h4>
+                    <span>Draft Articles </span>
+                </div>
+            </div>
+        </div>
+    </div>
+  </div>
+  <div class="col-xl-3 col-sm-6">
+    <div class="card mb-4 bg-white rounded-border">
+        <div class="card-body">
+            <div class="media d-flex align-items-center">
+                <div class="mr-4 rounded-circle bg-brand sr-icon-box text-white">
+                    <i class="ti-book"></i>
+                </div>
+                <div class="media-body text-dark">
+                    <h4 class="text-uppercase mb-0 weight-500">{{ published_articles_count }}</h4>
+                    <span>Published Articles </span>
+                </div>
+            </div>
+        </div>
+    </div>
+  </div>
+  <div class="col-xl-3 col-sm-6">
+    <div class="card mb-4 bg-white rounded-border">
+        <div class="card-body">
+            <div class="media d-flex align-items-center">
+                <div class="mr-4 rounded-circle bg-brand sr-icon-box text-white">
+                    <i class="ti-trash"></i>
+                </div>
+                <div class="media-body text-dark">
+                    <h4 class="text-uppercase mb-0 weight-500">{{ archived_articles_count }}</h4>
+                    <span>Archived Articles </span>
+                </div>
+            </div>
+        </div>
+    </div>
+  </div>
+</div>
+
+<div class="row">
+  <div class="col-md-12">
+    <div class="card shadow-sm rounded-border">
+      <div class="card-body">
+        <h3 class="text-center py-3">All Articles</h3>
+        <div class="float-right mb-2">
+            <a href="{% url 'dashboard:articles:article_add' %}">
+                <button class="btn btn-dark btn-sm">Add New Article </button>
+            </a>
+        </div>
+        <div class="table-responsive table-responsive-sm">
+        <table class="table table-striped w-100" id="data_table">
+          <thead>
+            <tr>
+              <th>Title</th>
+              <th>Body</th>
+              <th>Publication Status</th>
+              <th>Uploaded On</th>
+              <th>Uploaded By</th>
+              <th>Action</th>
+            </tr>
+          </thead>
+          <tbody>
+            {% for article in articles %}
+            <tr>
+              <td>{{ article.title }}</td>
+              <td>{{ article.body|safe|truncatechars:25 }}</td>
+              <td>
+                <span class="badge {{ badge_classes|get_badge_class:article.publication_status }}">
+                    {{article.publication_status}}
+                </span>
+              </td>
+              <td>{{ article.created | timesince }} ago</td>
+              <td>
+                <a href="{{article.uploaded_by.get_absolute_url}}">
+                    {{article.uploaded_by.get_full_name }}
+                </a>
+              </td>
+              <td>
+                <a href="{{article.get_absolute_url}}" class='btn btn-sm btn-dark'>
+                    <span class="text-brand">View</span>
+                </a>
+              </td>
+            </tr>
+
+            {% empty %}
+            <tr class="text-center">
+              <td colspan="5">No article yet.</td>
+            </tr>
+            {% endfor %}
+          </tbody>
+        </table>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+{% endblock %}
+
+{% block scripts %}
+<script src="{% static 'vendor/data-tables/jquery.dataTables.min.js' %}"></script>
+<script src="{% static 'vendor/data-tables/dataTables.bootstrap4.min.js' %}"></script>
+<!--init datatable-->
+<script>
+  $(document).ready(function () {
+    $("#data_table").DataTable({
+      pageLength: 25,
+      order: [],
+    });
+  });
+</script>
+{% endblock %}

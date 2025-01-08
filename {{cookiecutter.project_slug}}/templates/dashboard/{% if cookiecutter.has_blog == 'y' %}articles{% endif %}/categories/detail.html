@@ -1,0 +1,144 @@
+
+
+{% extends 'base.html' %}
+{% load static %}
+{% block title %} Category
+Details | {{category.name|title}} {% endblock %}
+
+{% load custom_filters %}
+{% block styles %}
+<link
+  rel="stylesheet"
+  href="{% static 'vendor/data-tables/dataTables.bootstrap4.min.css' %}"
+/>
+{% endblock %}
+
+{% block content %}
+<nav aria-label="breadcrumb mb-2">
+    <ol class="breadcrumb">
+      <li class="breadcrumb-item"><a href="{% url 'dashboard:home_page' %}">{{site.name}}</a></li>
+      <li class="breadcrumb-item"><a href="{% url 'dashboard:articles:article_list' %}">Articles</a></li>
+      <li class="breadcrumb-item"><a href="{% url 'dashboard:articles:category_list' %}">Categories</a></li>
+      <li class="breadcrumb-item active">{{category.name|title}}</li>
+    </ol>
+</nav>
+
+<div class="row">
+  <div class="col-md-12">
+    <div class="card">
+      <div class="card-body">
+        <div class="row text-center">
+          <div class="col-md-12">
+            <div class="m-3 p-3 shadow-sm">
+              <h3 class="py-3">Article Category Details</h3>
+              <div class="table-responsive">
+                <table class="table table-striped">
+                  <tbody>
+                    <tr>
+                      <th>Name</th>
+                      <td>{{ category.name|title }}</td>
+                    </tr>
+                    <tr>
+                        <th>Total Articles</th>
+                        <td>{{ category.articles.count }}</td>
+                      </tr>
+                    <tr>
+                      <th>Uploaded On</th>
+                      <td>{{ category.created }}</td>
+                    </tr>
+
+                    <tr>
+                      <th>Last Updated</th>
+                      <td>{{ category.modified }}</td>
+                    </tr>
+                    <tr>
+                      <th>Uploaded By</th>
+                      <td>  <a href="{{category.uploaded_by.get_absolute_url}}"> {{ category.uploaded_by.get_full_name }} </a> </td>
+                    </tr>
+                  </tbody>
+                </table>
+              </div>
+              <a href="{% url 'dashboard:articles:category_edit' slug=category.slug %}">
+                <button class="btn btn-dark btn-md">Edit</button>
+              </a>
+            </div>
+          </div>
+        </div>
+      </div>
+
+    </div>
+  </div>
+</div>
+
+<div class="row mt-4">
+  <div class="col-md-12">
+    <div class="card shadow-sm rounded-border">
+      <div class="card-body">
+        <h3 class="text-center py-3">All Articles</h3>
+        <div class="float-right mb-2">
+            <a href="{% url 'dashboard:articles:category_article_add' slug=category.slug %}">
+                <button class="btn btn-dark btn-sm">Add New Article</button>
+            </a>
+        </div>
+        <div class="table-responsive">
+            <table class="table table-striped w-100" id="data_table">
+                <thead>
+                  <tr>
+                    <th>Title</th>
+                    <th>Body</th>
+                    <th>Publication Status</th>
+                    <th>Uploaded On</th>
+                    <th>Uploaded By</th>
+                    <th>Action</th>
+                  </tr>
+                </thead>
+                <tbody>
+                  {% for article in articles %}
+                  <tr>
+                    <td>{{ article.title }}</td>
+                    <td>{{ article.body|safe|truncatechars:25 }}</td>
+                    <td>
+                      <span class="badge {{ badge_classes|get_badge_class:article.publication_status }}">
+                          {{article.publication_status}}
+                      </span>
+                    </td>
+                    <td>{{ article.created | timesince }} ago</td>
+                    <td>
+                      <a href="{{article.uploaded_by.get_absolute_url}}">
+                          {{article.uploaded_by.get_full_name }}
+                      </a>
+                    </td>
+                    <td>
+                      <a href="{{article.get_absolute_url}}" class='btn btn-sm btn-dark'>
+                          <span class="text-brand">View</span>
+                      </a>
+                    </td>
+                  </tr>
+
+                  {% empty %}
+                  <tr class="text-center">
+                    <td colspan="5">No article yet.</td>
+                  </tr>
+                  {% endfor %}
+                </tbody>
+              </table>
+          </div>
+      </div>
+    </div>
+  </div>
+</div>
+
+
+
+{% endblock %} {% block scripts %}
+<script src="{% static 'js/jquery.dataTables.min.js' %}"></script>
+<script src="{% static 'js/dataTables.bootstrap4.min.js' %}"></script>
+<script>
+  $(document).ready(function () {
+    $("#data_table").DataTable({
+      pageLength: 25,
+      order: [],
+    });
+  });
+</script>
+{% endblock %}
