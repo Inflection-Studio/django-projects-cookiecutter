@@ -1,10 +1,5 @@
 from django import forms
 from django.contrib.postgres.fields import ArrayField
-from django.db import models
-from django.utils.translation import gettext_lazy as _
-
-from . import constants as common_db_constants
-from .managers import PublishableManager
 
 
 class _TypedMultipleChoiceField(forms.TypedMultipleChoiceField):
@@ -37,22 +32,4 @@ class ChoiceArrayField(ArrayField):
         return super(ArrayField, self).formfield(**defaults)
 
 
-class Publishable(models.Model):
-	publication_status = models.CharField(
-		verbose_name=_("Publication Status"),
-		max_length=15,
-		choices=common_db_constants.PublicationStatusChoices.choices,
-		default=common_db_constants.PublicationStatusChoices.DRAFT,
-	)
-	published_at = models.DateTimeField(
-		verbose_name=_("Published At"), null=True, blank=True
-	)
-	archived_at = models.DateTimeField(
-		verbose_name=_("Archived At"), null=True, blank=True
-	)
 
-	objects = PublishableManager()
-
-	class Meta:
-		abstract = True
-		ordering = ("-published_at",)

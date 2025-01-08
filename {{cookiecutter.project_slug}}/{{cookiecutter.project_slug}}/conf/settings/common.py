@@ -106,6 +106,10 @@ THIRD_PARTY_APPS = [
     "drf_spectacular_sidecar",
     {%- endif %}
     "simple_history",
+    {%- if cookiecutter.has_blog == "y" or cookiecutter.use_taggit == 'y' %}
+    "tinymce",
+    "taggit",
+    {%- endif %}
     "widget_tweaks",
 ]
 
@@ -300,3 +304,28 @@ BOOTSTRAP4 = {
 }
 
 FRONTEND_HOST = env.str("FRONTEND_HOST", default="http://localhost:8000")
+
+{%- if cookiecutter.has_blog == 'y' %}
+TAGGIT_CASE_INSENSITIVE = True
+# TinyMCE WYSIWYG Editor configuration
+TINYMCE_DEFAULT_CONFIG = {
+    "height": 500,
+    "width": "100%",
+    "menubar": "file edit view insert format tools table help",
+    "plugins": """
+        advlist autolink lists link image charmap print preview anchor
+        searchreplace visualblocks code fullscreen
+        insertdatetime media table paste code help wordcount
+    """,
+    "toolbar": """
+        undo redo | formatselect | bold italic backcolor | alignleft aligncenter
+        alignright alignjustify | bullist numlist outdent indent | removeformat | help
+    """,
+    "image_advtab": True,  # Enables advanced image tab options
+    "images_upload_url": "/dashboard/tinymce/upload/",  # URL for image uploads
+    "automatic_uploads": False,
+    "relative_urls": False,
+    "remove_script_host": False,
+    "file_picker_callback": "django_tinymce_file_picker",
+}
+{%- endif %}

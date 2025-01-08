@@ -2,14 +2,12 @@ from decimal import Decimal
 
 from django.contrib import messages
 from django.core.exceptions import ValidationError
-from django.http import HttpRequest, HttpResponse, Http404
+from django.http import Http404, HttpRequest, HttpResponse
 from django.shortcuts import get_object_or_404, redirect
 from django.utils import timezone
-from django.utils.crypto import get_random_string
-from django.utils.text import slugify
 
 from . import constants as common_db_constants
-from .fields import Publishable
+from .models import Publishable
 
 
 class InvalidContentTypeError(TypeError):
@@ -35,44 +33,6 @@ def upload_to_directory(instance, filename):
 	)  # Get the model name (e.g., 'blog', 'event', etc.)
 	return f"{model_name}s/cover_images/{filename}"
 
-
-def unique_slug_generator(instance, new_slug: str = None, field_names: list = None):
-	"""
-	Generate a unique slug for a model instance.
-
-	:param instance: The model instance for which to generate the slug.
-	:param new_slug: An optional predefined slug.
-	:param field_names: A list of field names to be concatenated for slug generation.
-	:return: A unique slug string.
-	"""
-	if new_slug is not None:
-		slug = new_slug
-	else:
-		if field_names is None or not field_names:
-			field_names = [
-				"title"
-			]  # Default to the "title" field if none are specified
-
-		# Combine the values of the specified fields and add a random string
-		field_values = [str(getattr(instance, field, "")) for field in field_names]
-		combined_fields = " ".join(filter(None, field_values))
-		random_string = get_random_string(length=6)
-		slug = slugify(f"{combined_fields} {random_string}")
-
-	# Trim slug to fit the maximum length of the slug field
-	Klass = instance.__class__
-	max_length = Klass._meta.get_field("slug").max_length
-	slug = slug[:max_length]
-
-	# Ensure uniqueness
-	qs_exists = Klass.objects.filter(slug=slug).exists()
-	if qs_exists:
-		new_slug = f"{slug[:max_length - 5]}-{get_random_string(length=6)}"
-		return unique_slug_generator(
-			instance, new_slug=new_slug, field_names=field_names
-		)
-
-	return slug
 
 
 def get_average_review_rating(reviews) -> Decimal:

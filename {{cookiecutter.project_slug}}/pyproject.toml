@@ -15,6 +15,9 @@ django-allauth = "^0.62.1"
 django-bootstrap-datepicker-plus = "^5.0.5"
 django-environ = "^0.11.2"
 django-model-utils = "^4.5.1"
+{%- if cookiecutter.has_blog == "y" or cookiecutter.use_taggit == 'y' %}
+django-taggit = "^6.1.0"
+{% endif %}
 {%- if cookiecutter.use_drf == "y" %}
 django-cors-headers = "^4.4.0"
 djangorestframework = "^3.15.2"

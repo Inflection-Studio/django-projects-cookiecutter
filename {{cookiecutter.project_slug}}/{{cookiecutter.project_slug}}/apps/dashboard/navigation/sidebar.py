@@ -3,7 +3,9 @@ from typing import Optional
 
 from django.urls import reverse_lazy
 from django.utils.translation import gettext_lazy as _
+
 from .menu_builders import build_system_admin_menu
+
 
 @dataclass
 class SidebarItem:
