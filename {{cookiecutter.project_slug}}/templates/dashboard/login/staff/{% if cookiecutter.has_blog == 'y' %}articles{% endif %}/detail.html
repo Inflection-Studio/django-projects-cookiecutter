@@ -1,0 +1,131 @@
+{% extends 'base.html' %}
+{% load static %}
+{% load humanize %}
+{% load custom_filters %}
+
+{% block title %}
+Article Details - {{ article.title|title }}
+{% endblock %}
+
+
+{% block content %}
+<nav aria-label="breadcrumb mb-2">
+    <ol class="breadcrumb">
+      <li class="breadcrumb-item"><a href="{% url 'dashboard:home_page' %}">{{ site.name }}</a></li>
+      <li class="breadcrumb-item"><a href="{% url 'dashboard:articles:article_list' %}">Articles</a></li>
+      <li class="breadcrumb-item active text-capitalize" aria-current="page">{{ article.title }}</li>
+    </ol>
+</nav>
+
+<div class="row mb-4">
+    <div class="col-md-12">
+        <div class="card shadow-sm rounded-border">
+            <div class="card-body">
+                <h5 class="text-center py-4"> {{ article.get_full_name }} </h5>
+                <div class="row">
+                    <div class="col-md-4 text-center">
+                        {% if article.cover_image %}
+                        <img src="{{article.cover_image.url}}" class="card-img-top" class="w-75">
+                        {% else %}
+                        <img src="{% static 'img/progress.svg' %}" class="card-img-top" class="w-75">
+                        {% endif %}
+
+                        <div class="py-3">
+                            <a href="{% url 'dashboard:articles:article_edit' slug=article.slug %}">
+                                <button class="btn btn-brand text-white btn-sm mx-1">Edit</button>
+                            </a>
+                        </div>
+                    </div>
+                    <div class="table-responsive col-md-8 shadow-sm">
+                        <table class="table table-striped">
+                            <tbody>
+                                <tr>
+                                    <th>Title</th>
+                                    <td class='text-capitalize'>{{ article.title }}</td>
+                                </tr>
+                                {% if article.category %}
+                                <tr>
+                                    <th>Category</th>
+                                    <td class='text-capitalize'> <a href="{{article.category.get_absolute_url}}"> {{ article.category.name }} </a></td>
+                                </tr>
+                                {% endif %}
+
+                                <tr>
+                                    <th>Body</th>
+                                    <td> {{article.body|safe }} </td>
+                                </tr>
+                                <tr>
+                                    <th>Publication Status</th>
+                                    <td> <span class="badge {{ badge_classes|get_badge_class:article.publication_status }}">
+                                        {{article.publication_status}}
+                                    </span> </td>
+                                </tr>
+                                {% if article.tags %}
+                                <tr>
+                                    <th>Tags</th>
+                                    <td>
+                                {% for tag in article.tags.all %}
+                                <span class="badge badge-pill badge-secondary">{{ tag }}</span>
+                                {% endfor %}
+                                    </td>
+                                </tr>
+                                {% endif %}
+                                <tr>
+                                    <th>Created On</th>
+                                    <td> {{article.created }}</td>
+                                </tr>
+                                <tr>
+                                    <th>Created By</th>
+                                    <td>
+                                        <a href="{{article.uploaded_by.get_absolute_url}}">
+                                            {{article.uploaded_by.get_full_name }}
+                                        </a>
+                                    </td>
+                                </tr>
+                                <tr>
+                                    <th>Last Updated</th>
+                                    <td> {{ article.modified }}
+                                    </td>
+                                </tr>
+                                {% if article.publication_status == 'Published' %}
+                                <tr>
+                                    <th>Published On</th>
+                                    <td> {{ article.published_at }}
+                                    </td>
+                                </tr>
+                                {% elif article.publication_status == 'Archived' %}
+                                <tr>
+                                    <th>Archived On</th>
+                                    <td> {{ article.archived_at }}
+                                    </td>
+                                </tr>
+                                {% endif %}
+                            </tbody>
+                        </table>
+                        <div class="row text-center py-3">
+                            <div class="col-12 d-flex justify-content-center gap-3 flex-wrap">
+                                {% for action in actions %}
+                                    {% if action.is_delete %}
+                                        <a href="{% url 'dashboard:articlers:article_delete' slug=article.slug %}" class="btn {{ action.btn_class }} btn-md mx-2">
+                                            {{ action.label }}
+                                        </a>
+                                    {% else %}
+                                        <a href="{% url 'dashboard:articles:handle_article_action' pk=article.pk action=action.action.value %}" class="btn {{ action.btn_class }} btn-md mx-2">
+                                            {{ action.label }}
+                                        </a>
+                                    {% endif %}
+                                {% endfor %}
+                            </div>
+                        </div>
+
+                    </div>
+                    </div>
+
+                </div>
+            </div>
+        </div>
+
+    </div>
+</div>
+
+{% endblock %}
