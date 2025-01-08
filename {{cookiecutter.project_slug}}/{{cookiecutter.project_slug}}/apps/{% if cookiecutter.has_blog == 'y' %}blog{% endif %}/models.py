@@ -45,7 +45,7 @@ class ArticleCategory(UniqueSlugModel, TimeStampedModel):
     class Meta:
         verbose_name = _("Article Category")
         verbose_name_plural = _("Article Categories")
-        ordering = ["name", "-created_at"]
+        ordering = ["name", "-created"]
 
     def __str__(self):
         return self.name
@@ -72,6 +72,9 @@ class Blog(BaseContent):
         return reverse_lazy(
             "dashboard:articles:article_detail", kwargs={"slug": self.slug}
         )
+
+    def __str__(self):
+        return self.title
 
     class Meta:
         verbose_name = _("Article")

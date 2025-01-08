@@ -27,6 +27,6 @@ class ArticleSerializer(serializers.ModelSerializer, BaseContentSerializer):
             "cover_image",
             "tags",
             "category",
-            "created_at",
+            "created",
             "published_at",
         ]

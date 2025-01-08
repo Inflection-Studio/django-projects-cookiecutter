@@ -14,7 +14,7 @@ from {{ cookiecutter.project_slug }}.apps.blog import forms, models
 
 from {{ cookiecutter.project_slug }}.apps.blog.analytics.utils import get_model_publication_analytics
 from {{ cookiecutter.project_slug }}.common.db.utils import route_publication_action
-from {{ cookiecutter.project_slug }}.common.db.constants import PublicationActions, PublicationStatusChoices
+from {{ cookiecutter.project_slug }}.common.db.constants import PublicationStatusChoices
 from mixins.dashboard import AdminDashBoardMixin, PublishableContentMixin
 
 User = get_user_model()
@@ -42,7 +42,7 @@ class ArticleUpdateView(ArticleCreateUpdateView, UpdateView):
     context_object_name = "article"
 
 
-class ArticleListView(AdminDashBoardMixin,PublishableContentMixin, ListView):
+class ArticleListView(AdminDashBoardMixin, ListView):
     model = models.Blog
     context_object_name = "articles"
     template_name = "dashboard/articles/list.html"

@@ -4,13 +4,13 @@ from rest_framework.viewsets import ModelViewSet
 
 from {{ cookiecutter.project_slug }}.apps.blog import models
 from {{ cookiecutter.project_slug }}.apps.blog.api.v1 import filters, serializers
-from {{ cookiecutter.project_slug }}.common.db.constants import PublicationStatus
+from {{ cookiecutter.project_slug }}.common.db.constants import PublicationStatusChoices
 
 
 class ArticleViewSet(ModelViewSet):
     serializer_class = serializers.ArticleSerializer
     queryset = models.Blog.objects.filter(
-        publication_status=PublicationStatus.PUBLISHED,
+        publication_status=PublicationStatusChoices.PUBLISHED,
     ).order_by("-published_at")
     lookup_field = "slug"
     http_method_names = ["get"]
@@ -25,6 +25,6 @@ class ArticleCategoryListAPIView(generics.ListAPIView):
         return models.ArticleCategory.objects.annotate(
             published_articles_count=Count(
                 "articles",
-                filter=Q(articles__publication_status=PublicationStatus.PUBLISHED),
+                filter=Q(articles__publication_status=PublicationStatusChoices.PUBLISHED),
             )
         ).filter(published_articles_count__gt=0)

@@ -17,7 +17,23 @@ select = [
         "B9"
     ]
 ignore = ["E203", "E501", "B904", "DJ001", "W191"]
-
+known-first-party = ["{{ cookiecutter.project_slug }}"]
+known-third-party = [
+    "django",
+    "django_filters",
+    "model_utils",
+    {%- if cookiecutter.use_phone_numbers_field == "y" %}
+    "phonenumber_field",
+    {%- endif %}
+    {%- if cookiecutter.use_drf == "y" %}
+    "rest_framework",
+    {%- endif %}
+    "simple_history",
+    {%- if cookiecutter.has_blog == "y" or  cookiecutter.has_tags %}
+    "taggit",
+    "tinymce",
+    {%- endif %}
+]
 
 # Add the `line-too-long` rule to the enforced rule set. By default, Ruff omits rules that
 # overlap with the use of a formatter, like Black, but we can override this behavior by

@@ -2,7 +2,9 @@ from django.contrib.auth.admin import UserAdmin
 from django.contrib import admin
 from django.utils.translation import gettext_lazy as _
 
-from ..models import User
+from django.contrib.auth import get_user_model
+
+User = get_user_model()
 
 @admin.register(User)
 class UserAdmin(UserAdmin):

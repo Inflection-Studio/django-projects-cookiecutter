@@ -33,6 +33,12 @@ class AdminDashBoardMixin(
     def get_context_data(self, **kwargs: Any) -> dict[str, Any]:
         context = super().get_context_data(**kwargs)
         context["site"] = Site.objects.get_current()
+        context["badge_classes"] = {
+			PublicationStatusChoices.PUBLISHED: "badge-success",
+			PublicationStatusChoices.DRAFT: "badge-info",
+			PublicationStatusChoices.UNPUBLISHED: "badge-warning",
+			PublicationStatusChoices.ARCHIVED: "badge-danger",
+		}
         return context
 
     def test_func(self):

@@ -10,7 +10,7 @@ ICON_SETTINGS = "ti-settings"
 # Permissions
 PERM_VIEW_JOBPOST = "core.view_jobpost"
 PERM_VIEW_INQUIRY = "core.view_inquiry"
-PERM_VIEW_USER = "auth.view_user"
+PERM_VIEW_USER = "login.view_useraccount"
 
 # Labels
 LABEL_DASHBOARD = _("Dashboard")

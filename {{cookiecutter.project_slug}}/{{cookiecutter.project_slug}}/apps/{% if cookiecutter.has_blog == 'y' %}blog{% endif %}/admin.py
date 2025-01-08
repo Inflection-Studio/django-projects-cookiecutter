@@ -1,16 +1,16 @@
 from django.contrib import admin
 
 from .models import ArticleCategory, Blog, NewsletterSubscription
-
+from {{ cookiecutter.project_slug }}.utils.admin import UploadedByAdminMixin
 
 @admin.register(Blog)
-class BlogAdmin(admin.ModelAdmin):
+class BlogAdmin(UploadedByAdminMixin):
     """Admin configuration for the Blog model."""
 
-    list_display = ("title", "uploaded_by", "publication_status", "created_at")
-    list_filter = ("publication_status", "tags", "created_at")
+    list_display = ("title", "uploaded_by", "publication_status", "created")
+    list_filter = ("publication_status", "tags", "created")
     search_fields = ("title", "body", "tags__name")
-    readonly_fields = ("slug", "created_at", "updated_at")
+    readonly_fields = ("slug", "created", "modified", "uploaded_by")
     autocomplete_fields = ("uploaded_by",)
     fieldsets = (
         (
@@ -18,7 +18,7 @@ class BlogAdmin(admin.ModelAdmin):
             {"fields": ("title", "slug", "body", "cover_image", "tags", "uploaded_by")},
         ),
         ("Publication", {"fields": ("publication_status", "published_at")}),
-        ("Timestamps", {"fields": ("created_at", "updated_at")}),
+        ("Timestamps", {"fields": ("created", "modified")}),
     )
 
 
@@ -27,12 +27,12 @@ class ArticlecategoryAdmin(admin.ModelAdmin):
     """Admin configuration for the article category models."""
 
     list_display = ("slug", "name", "uploaded_by")
-    readonly_fields = ("slug", "created_at", "updated_at")
+    readonly_fields = ("slug", "created", "modified", "uploaded_by")
     autocomplete_fields = ("uploaded_by",)
 
 
 @admin.register(NewsletterSubscription)
-class NewssubscriptionAdmin(admin.ModelAdmin):
+class NewsletterubscriptionAdmin(admin.ModelAdmin):
     """Admin configuration for the newsletter subscription models."""
     list_display = ("email", "subscribed_at", "is_active")
     list_filter = ('is_active',)

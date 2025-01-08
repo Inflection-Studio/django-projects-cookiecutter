@@ -116,6 +116,9 @@ THIRD_PARTY_APPS = [
 LOCAL_APPS = [
     "{{ cookiecutter.project_slug }}.apps.dashboard.apps.DashboardConfig",
     "{{ cookiecutter.project_slug }}.apps.login.apps.LoginConfig",
+     {%- if cookiecutter.has_blog == "y" %}
+    "{{ cookiecutter.project_slug }}.apps.blog.apps.BlogConfig",
+     {%- endif %}
 ]
 
 INSTALLED_APPS = DJANGO_APPS + THIRD_PARTY_APPS + LOCAL_APPS
