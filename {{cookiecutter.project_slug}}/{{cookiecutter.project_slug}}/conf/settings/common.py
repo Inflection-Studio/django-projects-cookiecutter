@@ -106,7 +106,7 @@ THIRD_PARTY_APPS = [
     "drf_spectacular_sidecar",
     {%- endif %}
     "simple_history",
-    {%- if cookiecutter.has_blog == "y" or cookiecutter.use_taggit == 'y' %}
+    {%- if cookiecutter.has_blog == "y" or cookiecutter.has_tags == 'y' %}
     "tinymce",
     "taggit",
     {%- endif %}
