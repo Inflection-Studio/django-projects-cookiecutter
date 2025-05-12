@@ -7,7 +7,10 @@ from . import constants as common_db_constants
 from .managers import PublishableManager
 
 
-def unique_slug_generator(instance, new_slug: str = None, field_names: list = None):
+
+def unique_slug_generator(
+	instance, new_slug: str = None, field_names: list = None
+):
 	"""
 	Generate a unique slug for a model instance.
 
@@ -24,9 +27,34 @@ def unique_slug_generator(instance, new_slug: str = None, field_names: list = No
 				"title"
 			]  # Default to the "title" field if none are specified
 
-		# Combine the values of the specified fields and add a random string
-		field_values = [str(getattr(instance, field, "")) for field in field_names]
-		combined_fields = " ".join(filter(None, field_values))
+		# Check if the instance is new (unsaved)
+		if instance.pk is None:
+			# For new instances, directly combine the provided field names
+			combined_fields = " ".join(field_names).strip()
+		else:
+			# For existing instances, retrieve the values of the specified fields
+			field_values = []
+			for field in field_names:
+				# Retrieve the value of the field
+				value = getattr(instance, field, "")
+
+				# Check if the value is valid (not None or empty string)
+				if value and isinstance(value, str):
+					value = value.strip()  # Remove leading/trailing whitespace
+					if (
+						value
+					):  # Ensure the value is still non-empty after stripping
+						field_values.append(value)
+
+			# Join non-empty field values to create the base slug
+			combined_fields = " ".join(field_values)
+
+		if not combined_fields:
+			raise ValueError(
+				"The specified fields do not contain valid values."
+			)
+
+		# Add a random string for uniqueness
 		random_string = get_random_string(length=6)
 		slug = slugify(f"{combined_fields} {random_string}")
 
@@ -38,7 +66,7 @@ def unique_slug_generator(instance, new_slug: str = None, field_names: list = No
 	# Ensure uniqueness
 	qs_exists = Klass.objects.filter(slug=slug).exists()
 	if qs_exists:
-		new_slug = f"{slug[:max_length - 5]}-{get_random_string(length=6)}"
+		new_slug = f"{slug[: max_length - 7]}-{get_random_string(length=6)}"
 		return unique_slug_generator(
 			instance, new_slug=new_slug, field_names=field_names
 		)

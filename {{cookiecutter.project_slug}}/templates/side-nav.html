@@ -1,25 +1,31 @@
 {% block render_sidebar %}
-<ul id="nav-accordion">
-    {% for item in sidebar_items %}
-    <li class="sub-menu">
-        <a href="{{ item.url }}" class="{% if item.active %}active{% endif %}">
-            {% if item.icon %}
-            <i class="{{ item.icon }}"></i>
-            {% endif %}
-            <span>{{ item.label }}</span>
-        </a>
-        {% if item.sub_menu %}
-        <ul class="sub">
-            {% for sub_item in item.sub_menu %}
-            <li>
-                <a href="{{ sub_item.url }}" class="{% if sub_item.active %}active{% endif %}">
-                    {{ sub_item.label }}
-                </a>
-            </li>
-            {% endfor %}
-        </ul>
-        {% endif %}
-    </li>
-    {% endfor %}
-</ul>
+<div class="left-nav-wrap custom-left-nav-wrap">
+  <div class="left-sidebar">
+      <nav class="sidebar-menu side-nav-menu custom-sidebar-menu">
+          <ul id="nav-accordion">
+              {% for item in sidebar_items %}
+              <li class="sub-menu">
+                  <a href="{{ item.url }}" class="{% if item.active %}active{% endif %}">
+                      {% if item.icon %}
+                      <i class="{{ item.icon }}"></i>
+                      {% endif %}
+                      <span>{{ item.label }}</span>
+                  </a>
+                  {% if item.sub_menu %}
+                  {% for sub_group in item.sub_menu_groups %}
+                  <ul class="sub">
+                      {% for sub_item in sub_group %}
+                      <li class="{% if sub_item.active %}active{% endif %}">
+                          <a href="{{ sub_item.url }}">{{ sub_item.label }}</a>
+                      </li>
+                      {% endfor %}
+                  </ul>
+                  {% endfor %}
+                  {% endif %}
+              </li>
+              {% endfor %}
+          </ul>
+      </nav>
+  </div>
+</div>
 {% endblock %}
