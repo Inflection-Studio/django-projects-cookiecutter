@@ -118,7 +118,7 @@ def unpublish_publishable_content(
 def publish_publishable_content(
     request: HttpRequest,
     publishable_content: Publishable,
-    redirect: bool = True,  # for django admin templates
+    http_redirec: bool = True,  # for django admin templates
 ):
     publishable_content.publication_status = (
         common_db_constants.PublicationStatusChoices.PUBLISHED
@@ -134,7 +134,7 @@ def publish_publishable_content(
             "archived_at",
         ]
     )
-    if redirect:
+    if http_redirec:
         messages.success(request, f"{type(publishable_content).__name__} Published")
         return redirect(publishable_content.get_absolute_url())
 
@@ -142,7 +142,7 @@ def publish_publishable_content(
 def archive_publishable_content(
     request: HttpRequest,
     publishable_content: Publishable,
-    redirect: bool = True,
+    http_redirec: bool = True,
 ):
     publishable_content.publication_status = (
         common_db_constants.PublicationStatusChoices.ARCHIVED
@@ -152,7 +152,7 @@ def archive_publishable_content(
     publishable_content.save(
         update_fields=["publication_status", "modified", "archived_at"]
     )
-    if redirect:
+    if http_redirec:
         messages.success(request, f"{type(publishable_content).__name__} Archived")
         return redirect(publishable_content.get_absolute_url())
 
@@ -160,7 +160,7 @@ def archive_publishable_content(
 def draft_publishable_content(
     request: HttpRequest,
     publishable_content: Publishable,
-    redirect: bool = True,
+    http_redirec: bool = True,
 ):
     publishable_content.publication_status = (
         common_db_constants.PublicationStatusChoices.DRAFT
@@ -171,7 +171,7 @@ def draft_publishable_content(
     publishable_content.save(
         update_fields=["publication_status", "modified", "archived_at"]
     )
-    if redirect:
+    if http_redirec:
         messages.success(request, f"{type(publishable_content).__name__} Drafted")
         return redirect(publishable_content.get_absolute_url())
 
@@ -181,7 +181,7 @@ def process_publication_state_change(
     action: str,
     model_class: models.Model,
     pk: str | int,
-    redirect: bool = True,
+    http_redirec: bool = True,
 ) -> HttpResponse:
     """
     Handles actions on Publishable content (publish/unpublish/archive).
@@ -191,7 +191,7 @@ def process_publication_state_change(
                     action: The action to perform ('publish', 'unpublish', etc.).
                     model_class: The Django model class.
                     pk: The primary key of the model instance.
-                    redirect (bool): Whether to redirect to the instance's URL after performing the action.
+                    http_redirec (bool): Whether to redirect to the instance's URL after performing the action.
 
     Raises:
                     InvalidContentTypeError: If the model is not a subclass of Publishable.
@@ -226,10 +226,10 @@ def process_publication_state_change(
     publishable_content = get_object_or_404(model_class, pk=pk)
 
     # Perform the action
-    return action_function(request, publishable_content, redirect)
+    return action_function(request, publishable_content, http_redirec)
 
 
-def route_publication_action(request, action: str, pk: str | int, model_class):
+def route_publication_action(request, action: str, pk: str | int, model_class, http_redirect: bool = True):
     """
     Generic view to handle actions (publish, unpublish, archive, draft) for publishable models.
 
@@ -238,6 +238,8 @@ def route_publication_action(request, action: str, pk: str | int, model_class):
             action: The action to perform, derived from the URL.
             pk: The primary key of the object.
             model_class: The model class to operate on.
+            http_redirect (bool): Whether to redirect to the instance's 
+            URL after performing the action.
 
     Returns:
             HTTP Response from the handle_publishable_content_action function.
@@ -260,4 +262,5 @@ def route_publication_action(request, action: str, pk: str | int, model_class):
         action=valid_actions[action],
         model_class=model_class,
         pk=pk,
+        http_redirec=http_redirect,
     )
