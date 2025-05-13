@@ -48,7 +48,7 @@ pip-freeze:
 
 .PHONY: deps-clean
 deps-clean:
-	poetry env use 3.12.0
+	poetry env use 3.13.0
 
 .PHONY: deps
 deps: deps-clean
@@ -91,7 +91,7 @@ show_urls: deps-clean
 
 .phony: app
 app:
-	python manage.py startapp ${APP_NAME}
+	poetry run python manage.py startapp ${APP_NAME}
 	@echo "App ${APP_NAME} created successfully"
 	mv ./${APP_NAME} ${APP_DIRECTORY}
 	@echo "App Moved to the apps directory ${APP_DIRECTORY}"
