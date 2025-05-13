@@ -4,6 +4,7 @@
       <nav class="sidebar-menu side-nav-menu custom-sidebar-menu">
           <ul id="nav-accordion">
               {% for item in sidebar_items %}
+              {% if item %}
               <li class="sub-menu">
                   <a href="{{ item.url }}" class="{% if item.active %}active{% endif %}">
                       {% if item.icon %}
@@ -12,17 +13,18 @@
                       <span>{{ item.label }}</span>
                   </a>
                   {% if item.sub_menu %}
-                  {% for sub_group in item.sub_menu_groups %}
+                  {% for sub_item in item.sub_menu %}
+                  {% if sub_item %}
                   <ul class="sub">
-                      {% for sub_item in sub_group %}
                       <li class="{% if sub_item.active %}active{% endif %}">
                           <a href="{{ sub_item.url }}">{{ sub_item.label }}</a>
                       </li>
-                      {% endfor %}
                   </ul>
+                  {% endif %}
                   {% endfor %}
                   {% endif %}
               </li>
+              {% endif %}
               {% endfor %}
           </ul>
       </nav>
