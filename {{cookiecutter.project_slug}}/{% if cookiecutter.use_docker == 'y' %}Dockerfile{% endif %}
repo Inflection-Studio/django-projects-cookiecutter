@@ -1,4 +1,4 @@
-FROM python:3.12.5-slim AS base
+FROM python:3.13.0-slim AS base
 
 RUN apt-get update && apt-get install -y \
     libpq-dev \
@@ -12,14 +12,11 @@ RUN apt-get update && apt-get install -y \
     && rm -rf /var/lib/apt/lists/*
 
 
-ARG GIT_SHA
 ARG DJANGO_SETTINGS_MODULE={{cookiecutter.project_slug}}.conf.settings.live
 
 ENV PYTHONUNBUFFERED 1 \
-    GIT_SHA=${GIT_SHA:-} \
     DJANGO_SETTINGS_MODULE=${DJANGO_SETTINGS_MODULE} \
-    POETRY_HOME="/opt/poetry" \
-    POETRY_VERSION=1.8.3
+    POETRY_VERSION=2.1.1
 
 WORKDIR /code
 
@@ -30,11 +27,9 @@ ENV PYTHONPATH=${PYTHONPATH}:${PWD} \
 # Upgrade pip to the latest version to stop any error messages
 RUN python3 -m pip install -U pip
 
-# Install Poetry
-RUN apt-get update \
-    && curl -sSL https://install.python-poetry.org | python3 - \
-    && apt-get remove -y curl \
-    && apt-get autoremove -y
+# Install Poetry and create a symlink to make it globally accessible
+RUN curl -sSL https://install.python-poetry.org | python3 -
+ENV PATH="/root/.local/bin:$PATH"
 
 COPY pyproject.toml \
      poetry.lock \
