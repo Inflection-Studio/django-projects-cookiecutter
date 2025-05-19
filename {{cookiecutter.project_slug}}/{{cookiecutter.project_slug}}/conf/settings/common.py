@@ -178,14 +178,12 @@ AUTH_PASSWORD_VALIDATORS = [
     },
 ]
 
-# Authentication settings
 AUTH_USER_MODEL = "login.UserAccount"
 
-ACCOUNT_EMAIL_REQUIRED = True
-ACCOUNT_USERNAME_REQUIRED = False
-ACCOUNT_SIGNUP_PASSWORD_ENTER_TWICE = False
+# Ref: https://docs.allauth.org/en/dev/account/configuration.html#signup
+ACCOUNT_SIGNUP_FIELDS = ['email*', 'password1*',]
+ACCOUNT_LOGIN_METHODS = {'email',}
 ACCOUNT_SESSION_REMEMBER = True
-ACCOUNT_AUTHENTICATION_METHOD = "email"
 ACCOUNT_UNIQUE_EMAIL = True
 
 LOGIN_URL = "login"
