@@ -7,110 +7,97 @@ from . import constants as common_db_constants
 from .managers import PublishableManager
 
 
+def unique_slug_generator(instance, new_slug: str = None, field_names: list = None):
+    """
+    Generate a unique slug for a model instance.
 
-def unique_slug_generator(
-	instance, new_slug: str = None, field_names: list = None
-):
-	"""
-	Generate a unique slug for a model instance.
+    :param instance: The model instance for which to generate the slug.
+    :param new_slug: An optional predefined slug.
+    :param field_names: A list of field names to be concatenated for slug generation.
+    :return: A unique slug string.
+    """
+    if new_slug is not None:
+        slug = new_slug
+    else:
+        if field_names is None or not field_names:
+            field_names = [
+                "title"
+            ]  # Default to the "title" field if none are specified
 
-	:param instance: The model instance for which to generate the slug.
-	:param new_slug: An optional predefined slug.
-	:param field_names: A list of field names to be concatenated for slug generation.
-	:return: A unique slug string.
-	"""
-	if new_slug is not None:
-		slug = new_slug
-	else:
-		if field_names is None or not field_names:
-			field_names = [
-				"title"
-			]  # Default to the "title" field if none are specified
+        # Resolve field names to their values; if a value literal is passed,
+        # preserve backward compatibility by using it directly.
+        field_values = []
+        for field in field_names:
+            value = getattr(instance, field, field)
+            if value and isinstance(value, str):
+                value = value.strip()
+                if value:
+                    field_values.append(value)
 
-		# Check if the instance is new (unsaved)
-		if instance.pk is None:
-			# For new instances, directly combine the provided field names
-			combined_fields = " ".join(field_names).strip()
-		else:
-			# For existing instances, retrieve the values of the specified fields
-			field_values = []
-			for field in field_names:
-				# Retrieve the value of the field
-				value = getattr(instance, field, "")
+        # Join non-empty field values to create the base slug
+        combined_fields = " ".join(field_values)
 
-				# Check if the value is valid (not None or empty string)
-				if value and isinstance(value, str):
-					value = value.strip()  # Remove leading/trailing whitespace
-					if (
-						value
-					):  # Ensure the value is still non-empty after stripping
-						field_values.append(value)
+        if not combined_fields:
+            raise ValueError("The specified fields do not contain valid values.")
 
-			# Join non-empty field values to create the base slug
-			combined_fields = " ".join(field_values)
+        # Add a random string for uniqueness
+        random_string = get_random_string(length=6)
+        slug = slugify(f"{combined_fields} {random_string}")
 
-		if not combined_fields:
-			raise ValueError(
-				"The specified fields do not contain valid values."
-			)
+    # Trim slug to fit the maximum length of the slug field
+    Klass = instance.__class__
+    max_length = Klass._meta.get_field("slug").max_length
+    slug = slug[:max_length]
 
-		# Add a random string for uniqueness
-		random_string = get_random_string(length=6)
-		slug = slugify(f"{combined_fields} {random_string}")
+    # Ensure uniqueness
+    qs_exists = Klass.objects.filter(slug=slug).exists()
+    if qs_exists:
+        new_slug = f"{slug[: max_length - 7]}-{get_random_string(length=6)}"
+        return unique_slug_generator(
+            instance, new_slug=new_slug, field_names=field_names
+        )
 
-	# Trim slug to fit the maximum length of the slug field
-	Klass = instance.__class__
-	max_length = Klass._meta.get_field("slug").max_length
-	slug = slug[:max_length]
-
-	# Ensure uniqueness
-	qs_exists = Klass.objects.filter(slug=slug).exists()
-	if qs_exists:
-		new_slug = f"{slug[: max_length - 7]}-{get_random_string(length=6)}"
-		return unique_slug_generator(
-			instance, new_slug=new_slug, field_names=field_names
-		)
-
-	return slug
+    return slug
 
 
 class UniqueSlugModel(models.Model):
-	slug = models.SlugField(
-		verbose_name=_("Slug"),
-		max_length=255,
-		unique=True,
-		blank=True,
-		editable=False,
-		db_index=True,
-	)
+    slug = models.SlugField(
+        verbose_name=_("Slug"),
+        max_length=255,
+        unique=True,
+        blank=True,
+        editable=False,
+        db_index=True,
+    )
 
-	class Meta:
-		abstract = True
+    class Meta:
+        abstract = True
 
-	def save(self, generate_unique_slug=True, *args, **kwargs):
-		field_names: list = kwargs.pop("field_names", [])
-		if not field_names:
-			field_names = ["title"]
-		if generate_unique_slug and not self.slug:
-			self.slug = unique_slug_generator(instance=self, field_names=field_names)
-		super().save(*args, **kwargs)
+    def save(self, generate_unique_slug=True, *args, **kwargs):
+        field_names: list = kwargs.pop("field_names", [])
+        if not field_names:
+            field_names = ["title"]
+        if generate_unique_slug and not self.slug:
+            self.slug = unique_slug_generator(instance=self, field_names=field_names)
+        super().save(*args, **kwargs)
+
 
 class Publishable(models.Model):
-	publication_status = models.CharField(
-		verbose_name=_("Publication Status"),
-		max_length=15,
-		choices=common_db_constants.PublicationStatusChoices.choices,
-		default=common_db_constants.PublicationStatusChoices.DRAFT,
-	)
-	published_at = models.DateTimeField(
-		verbose_name=_("Published At"), null=True, blank=True
-	)
-	archived_at = models.DateTimeField(
-		verbose_name=_("Archived At"), null=True, blank=True
-	)
+    publication_status = models.CharField(
+        verbose_name=_("Publication Status"),
+        max_length=15,
+        choices=common_db_constants.PublicationStatusChoices.choices,
+        default=common_db_constants.PublicationStatusChoices.DRAFT,
+    )
+    published_at = models.DateTimeField(
+        verbose_name=_("Published At"), null=True, blank=True
+    )
+    archived_at = models.DateTimeField(
+        verbose_name=_("Archived At"), null=True, blank=True
+    )
 
-	objects = PublishableManager()
+    objects = PublishableManager()
 
-	class Meta:
-		abstract = True
-		ordering = ("-published_at",)
+    class Meta:
+        abstract = True
+        ordering = ("-published_at",)
