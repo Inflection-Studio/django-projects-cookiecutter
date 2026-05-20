@@ -3,20 +3,31 @@
 # Set the maximum line length to 79.
 line-length = 79
 
+# Add the `line-too-long` rule to the enforced rule set. By default, Ruff omits rules that
+# overlap with the use of a formatter, like Black, but we can override this behavior by
+# explicitly adding the rule.
+extend-select = ["E501"]
+
 [lint]
 select = [
+        "ARG", # flake8-unused-arguments
         "B", # flake8-bugbear
         "C",
+        "COM", # flake8-commas
         "DJ", # flake8-django
         "E", # pycodestyle
         "F", # Pyflakes
         "I", # isort
         "PL", # pylint
+        "PT", # flake8-pytest-style
+        "TID", # flake8-tidy-imports
         "UP", # pyupgrade
         "W",
         "B9"
     ]
-ignore = ["E203", "E501", "B904", "DJ001", "W191"]
+ignore = ["E203", "E501", "DJ001", "W191"]
+
+[lint.isort]
 known-first-party = ["{{ cookiecutter.project_slug }}"]
 known-third-party = [
     "django",
@@ -34,11 +45,6 @@ known-third-party = [
     "tinymce",
     {%- endif %}
 ]
-
-# Add the `line-too-long` rule to the enforced rule set. By default, Ruff omits rules that
-# overlap with the use of a formatter, like Black, but we can override this behavior by
-# explicitly adding the rule.
-extend-select = ["E501"]
 
 [format]
 quote-style = "double"
