@@ -8,7 +8,7 @@ package-mode = false
 
 [tool.poetry.dependencies]
 python = "^3.13"
-django = "^5.2"
+django = "^6.0.5"
 django-filter = "^25.1"
 pillow = "^11.2.1"
 django-allauth = "^65.8.0"
@@ -35,6 +35,7 @@ gunicorn = "^23.0.0"
 psycopg2-binary = "^2.9.10"
 ipython = "^9.0.2"
 django-bootstrap4 = "^24.3"
+ruff = "^0.15.16"
 
 {%- if cookiecutter.use_martor_editor == 'y' %}
 martor = "^1.6.45"
@@ -42,11 +43,15 @@ martor = "^1.6.45"
 
 
 [tool.poetry.group.test.dependencies]
-pytest = "^8.3.2"
+pytest = "^9.0.3"
+pytest-django = "^4.9.0"
+factory-boy = "^3.3.1"
+pytest-cov = "^6.0.0"
+coverage = {extras = ["toml"], version = "^7.0.0"}
 
 
 [tool.poetry.group.dev.dependencies]
-pre-commit = "^4.2.0"
+pre-commit = "^4.6.0"
 
 [build-system]
 requires = ["poetry-core"]
