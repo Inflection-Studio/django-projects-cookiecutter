@@ -4,8 +4,9 @@ services:
       context: .
     container_name: {{cookiecutter.project_slug}}_django
     restart: unless-stopped
+    env_file:
+      - .env
     volumes:
-      - .:/code
       - ./deploy/gunicorn/logs:/deploy/gunicorn/logs
       - static:/code/static
       - media:/code/media
@@ -30,7 +31,7 @@ services:
     networks:
       - internal
     volumes:
-      - pgdata:/var/lib/postgresql/data/
+      - pgdata18:/var/lib/postgresql
     healthcheck:
       test:
         [
@@ -60,7 +61,6 @@ services:
       retries: 3
 
     restart: unless-stopped
-
   nginx:
     restart: always
     build: ./deploy/nginx
@@ -68,7 +68,6 @@ services:
     networks:
       - internal
     volumes:
-      - ./deploy/nginx/:/etc/nginx/conf.d
       - ./deploy/nginx/logs/:/code/logs/nginx
       - static:/code/static
       - media:/code/media
@@ -89,6 +88,6 @@ networks:
 
 
 volumes:
-  pgdata:
+  pgdata18:
   media:
   static:

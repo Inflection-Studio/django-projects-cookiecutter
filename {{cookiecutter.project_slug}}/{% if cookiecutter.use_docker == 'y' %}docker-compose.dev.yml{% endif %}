@@ -1,0 +1,56 @@
+services:
+  web:
+    develop:
+      watch:
+        - action: sync+restart
+          path: ./{{cookiecutter.project_slug}}
+          target: /code/{{cookiecutter.project_slug}}
+        - action: sync+restart
+          path: ./mixins
+          target: /code/mixins
+        - action: sync+restart
+          path: ./templates
+          target: /code/templates
+        - action: sync+restart
+          path: ./manage.py
+          target: /code/manage.py
+        - action: sync+restart
+          path: ./entrypoint.sh
+          target: /code/entrypoint.sh
+        - action: rebuild
+          path: ./pyproject.toml
+        - action: rebuild
+          path: ./poetry.lock
+        - action: rebuild
+          path: ./Dockerfile
+
+  pgadmin:
+    image: dpage/pgadmin4
+    container_name: {{cookiecutter.project_slug}}_pg_admin
+    restart: unless-stopped
+    networks:
+      - internal
+    depends_on:
+      - postgres
+    ports:
+      - "5055:80"
+    environment:
+      - PGADMIN_DEFAULT_EMAIL=${PGADMIN_DEFAULT_EMAIL}
+      - PGADMIN_DEFAULT_PASSWORD=${PGADMIN_DEFAULT_PASSWORD}
+    healthcheck:
+      test: ["CMD", "curl", "-f", "http://localhost:5055/login"]
+      interval: 30s
+      timeout: 10s
+      retries: 3
+
+  nginx:
+    develop:
+      watch:
+        - action: sync+restart
+          path: ./deploy/nginx
+          target: /etc/nginx/conf.d
+          ignore:
+            - Dockerfile
+            - logs/
+        - action: rebuild
+          path: ./deploy/nginx/Dockerfile

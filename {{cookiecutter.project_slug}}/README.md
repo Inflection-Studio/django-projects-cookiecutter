@@ -15,7 +15,7 @@ Make sure you have Docker and Docker Compose installed on your machine.**
 1. Python 3.12.0 installed
 2. Text editor such as [vs code](https://code.visualstudio.com/) or sublime text
 3. Git - preferrably use terminal like [gitbash](https://gitforwindows.org/)
-4. Poetry dependency manager - See setup instructions [here](https://python-poetry.org/docs/)
+4. Poetry dependency manager - See the [Poetry setup instructions](https://python-poetry.org/docs/)
 
 ## Setup
 
@@ -23,7 +23,7 @@ Make sure you have Docker and Docker Compose installed on your machine.**
 2. Change directory to the location of this repository.
 3. Create a `.env` file using the included `.env.example` as an example.
 4. Generate a secret key for your app and paste into the SECRET_KEY section of .env file
-you can find generate the key from [here](https://djecrety.ir/)
+you can generate the key with the [Djecrety secret key generator](https://djecrety.ir/)
 5. Create and start your preferred Python virtual environment. For
 more information on how to set up a virtual environment, check the instructions on [this link](https://tutorial.djangogirls.org/en/django_installation/). Install the required libraries by running the commands below, by changing to
 the project directory.
@@ -45,6 +45,45 @@ the project directory.
 To run locally:
 
     make runserver
+
+### Docker Workflows
+
+This template uses a base Compose file plus environment-specific overrides:
+
+- `docker-compose.yml`: base deployment-oriented stack
+- `docker-compose.dev.yml`: local development overrides such as `watch` and `pgadmin`
+- `docker-compose.staging.yml`: staging-only overrides
+
+Common stack commands:
+
+    make docker-deploy
+    make docker-dev
+    make docker-staging
+
+Run specific services:
+
+    docker compose -f docker-compose.yml up -d web
+    docker compose -f docker-compose.yml up -d postgres nginx
+    docker compose -f docker-compose.yml -f docker-compose.dev.yml up -d web
+    docker compose -f docker-compose.yml -f docker-compose.staging.yml up -d web
+
+Rebuild a specific service:
+
+    docker compose -f docker-compose.yml up -d --build web
+    docker compose -f docker-compose.yml -f docker-compose.dev.yml up -d --build nginx
+
+Restart a specific service:
+
+    docker compose -f docker-compose.yml restart web
+    docker compose -f docker-compose.yml -f docker-compose.dev.yml restart nginx
+    docker compose -f docker-compose.yml -f docker-compose.staging.yml restart postgres
+
+Start an already-created stopped service:
+
+    docker compose -f docker-compose.yml start web
+    docker compose -f docker-compose.yml -f docker-compose.dev.yml start pgadmin
+
+When using an override file, always include the base file first. The override file is not meant to run on its own.
 
 ## Development
 
