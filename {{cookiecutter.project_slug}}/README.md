@@ -59,6 +59,7 @@ Common stack commands:
     make docker-deploy
     make docker-dev
     make docker-staging
+    make docker-staging-build
 
 Run specific services:
 
@@ -78,7 +79,12 @@ Restart a specific service:
     docker compose -f docker-compose.yml -f docker-compose.dev.yml restart nginx
     docker compose -f docker-compose.yml -f docker-compose.staging.yml restart postgres
 
-For staging and production, `restart` only restarts the existing container. It does not rebuild the image or pick up source-code changes from the host. If you change Django code or settings modules, rebuild the affected service instead:
+The staging override bind-mounts the project code and nginx config back into the containers, so minor source changes can be picked up with a restart:
+
+    docker compose -f docker-compose.yml -f docker-compose.staging.yml restart web
+    docker compose -f docker-compose.yml -f docker-compose.staging.yml restart nginx
+
+Production remains image-based. In production, `restart` only restarts the existing container. It does not rebuild the image or pick up source-code changes from the host. If you change Django code or settings modules there, rebuild the affected service instead:
 
     docker compose -f docker-compose.yml -f docker-compose.staging.yml up -d --build web
 

@@ -7,7 +7,8 @@ help:
 	@echo "  deps-prod          to install dependencies for production environment"
 	@echo "  docker-deploy      builds docker containers and runs them for deployment"
 	@echo "  docker-dev         builds docker containers and runs the development stack with watch"
-	@echo "  docker-staging     builds docker containers and runs the staging stack"
+	@echo "  docker-staging     runs the staging stack with live code mounts"
+	@echo "  docker-staging-build builds images and runs the staging stack"
 	@echo "  docker-down      	stop all running docker containers on the project"
 	@echo "  fmt-all     	   	run pre-commit hooks on all program files"
 	@echo "  makemigrations    	make Django makemigrations for edited models"
@@ -110,6 +111,10 @@ docker-dev:
 
 .PHONY: docker-staging
 docker-staging:
+	docker compose -f docker-compose.yml -f docker-compose.staging.yml up -d --remove-orphans
+
+.PHONY: docker-staging-build
+docker-staging-build:
 	docker compose -f docker-compose.yml -f docker-compose.staging.yml up --build -d --remove-orphans
 
 .PHONY: docker-down
