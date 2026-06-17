@@ -6,6 +6,8 @@ help:
 	@echo "  deps              	to install dependencies for local development"
 	@echo "  deps-prod          to install dependencies for production environment"
 	@echo "  docker-deploy      builds docker containers and runs them for deployment"
+	@echo "  docker-dev         builds docker containers and runs the development stack with watch"
+	@echo "  docker-staging     builds docker containers and runs the staging stack"
 	@echo "  docker-down      	stop all running docker containers on the project"
 	@echo "  fmt-all     	   	run pre-commit hooks on all program files"
 	@echo "  makemigrations    	make Django makemigrations for edited models"
@@ -100,11 +102,19 @@ app:
 # docker
 .PHONY: docker-deploy
 docker-deploy:
-	docker compose up --build -d --remove-orphans
+	docker compose -f docker-compose.yml up --build -d --remove-orphans
+
+.PHONY: docker-dev
+docker-dev:
+	docker compose -f docker-compose.yml -f docker-compose.dev.yml up --build --watch --remove-orphans
+
+.PHONY: docker-staging
+docker-staging:
+	docker compose -f docker-compose.yml -f docker-compose.staging.yml up --build -d --remove-orphans
 
 .PHONY: docker-down
 docker-down:
-	docker compose down --remove-orphans
+	docker compose -f docker-compose.yml -f docker-compose.dev.yml down --remove-orphans
 
 .PHONY: docker-logs
 docker-logs:

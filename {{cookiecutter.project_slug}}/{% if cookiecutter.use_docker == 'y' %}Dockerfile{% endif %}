@@ -42,9 +42,9 @@ COPY ./entrypoint.sh /code/entrypoint.sh
 # make the entry point files executable
 RUN chmod +x entrypoint.sh
 
-COPY . .
-
 RUN make deps-prod
+
+COPY . .
 
 EXPOSE 8000
 ENTRYPOINT ["./entrypoint.sh"]

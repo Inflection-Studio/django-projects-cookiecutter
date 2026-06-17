@@ -73,3 +73,16 @@ db.*
 *.sql
 *.sqlite
 *.sqlite3
+
+# local runtime artifacts
+deploy/gunicorn/logs/
+deploy/nginx/logs/
+media/
+static/
+
+# test and tooling caches
+.coverage
+.pytest_cache/
+.ruff_cache/
+.mypy_cache/
+htmlcov/
