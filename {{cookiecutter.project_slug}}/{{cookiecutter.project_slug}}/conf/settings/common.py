@@ -52,7 +52,14 @@ DEBUG = env.bool("DEBUG", default=True)
 if DEBUG and IS_PRODUCTION:
     raise ImproperlyConfigured("Debugging enabled in Production!")
 
-ALLOWED_HOSTS = []
+ALLOWED_HOSTS = env.list(
+    "ALLOWED_HOSTS",
+    default=[
+        "testserver",
+        "localhost",
+        "127.0.0.1",
+    ],
+)
 
 
 # CORS settingss

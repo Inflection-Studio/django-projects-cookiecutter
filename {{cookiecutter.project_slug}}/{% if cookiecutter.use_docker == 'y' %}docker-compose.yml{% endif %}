@@ -42,25 +42,6 @@ services:
       timeout: 5s
       retries: 5
 
-  pgadmin:
-    image: dpage/pgadmin4
-    container_name: {{cookiecutter.project_slug}}_pg_admin
-    networks:
-      - internal
-    depends_on:
-      - postgres
-    ports:
-      - "5055:80"
-    environment:
-      - PGADMIN_DEFAULT_EMAIL=${PGADMIN_DEFAULT_EMAIL}
-      - PGADMIN_DEFAULT_PASSWORD=${PGADMIN_DEFAULT_PASSWORD}
-    healthcheck:
-      test: [ "CMD", "curl", "-f", "http://localhost:5055/login" ]
-      interval: 30s
-      timeout: 10s
-      retries: 3
-
-    restart: unless-stopped
   nginx:
     restart: always
     build: ./deploy/nginx
