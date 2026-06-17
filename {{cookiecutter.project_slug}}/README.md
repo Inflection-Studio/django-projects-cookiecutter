@@ -78,6 +78,14 @@ Restart a specific service:
     docker compose -f docker-compose.yml -f docker-compose.dev.yml restart nginx
     docker compose -f docker-compose.yml -f docker-compose.staging.yml restart postgres
 
+For staging and production, `restart` only restarts the existing container. It does not rebuild the image or pick up source-code changes from the host. If you change Django code or settings modules, rebuild the affected service instead:
+
+    docker compose -f docker-compose.yml -f docker-compose.staging.yml up -d --build web
+
+For deployment environments, keep hostnames and similar runtime settings in `.env`, for example:
+
+    ALLOWED_HOSTS=staging-api.example.com,api.example.com,example.com
+
 Start an already-created stopped service:
 
     docker compose -f docker-compose.yml start web
