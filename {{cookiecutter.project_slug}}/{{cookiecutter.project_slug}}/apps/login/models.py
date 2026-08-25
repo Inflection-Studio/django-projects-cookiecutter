@@ -10,6 +10,7 @@ from phonenumber_field.modelfields import PhoneNumberField
 from simple_history.models import HistoricalRecords
 
 {%- if cookiecutter.username_type == "email" %}
+
 from .managers import CustomUserManager
 {%- endif %}
 

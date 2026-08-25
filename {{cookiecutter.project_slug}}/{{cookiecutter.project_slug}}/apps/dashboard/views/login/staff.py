@@ -2,8 +2,9 @@ from django.contrib.auth import get_user_model
 from django.utils.crypto import get_random_string
 from django.views.generic import CreateView, DetailView, ListView, UpdateView
 
-from mixins.dashboard import AdminDashBoardMixin
 from {{ cookiecutter.project_slug }}.apps.login.utils.email import EmailService
+
+from mixins.dashboard import AdminDashBoardMixin
 
 User = get_user_model()
 
@@ -60,7 +61,9 @@ class StaffUpdateTemplateView(AdminDashBoardMixin, UpdateView):
         "first_name",
         "last_name",
         "email",
-        {%- if cookiecutter.use_phone_numbers_field == "y" %} "phone_number", {%- endif %} 
+        {%- if cookiecutter.use_phone_numbers_field == "y" %}
+        "phone_number",
+        {%- endif %}
         "is_superuser",
         "is_active",
     ]

@@ -33,17 +33,17 @@ urlpatterns = [
     # drf documentation urls
     {%- if cookiecutter.use_drf == "y" %}
     path("api/schema/", SpectacularAPIView.as_view(), name="schema"),
-	path(
-		"api/schema/swagger-ui/",
-		SpectacularSwaggerView.as_view(url_name="schema"),
-		name="swagger-ui",
-	),
-	path(
-		"api/schema/redoc/",
-		SpectacularRedocView.as_view(url_name="schema"),
-		name="redoc",
-	),
-	{%- endif %}
+    path(
+        "api/schema/swagger-ui/",
+        SpectacularSwaggerView.as_view(url_name="schema"),
+        name="swagger-ui",
+    ),
+    path(
+        "api/schema/redoc/",
+        SpectacularRedocView.as_view(url_name="schema"),
+        name="redoc",
+    ),
+    {%- endif %}
     path("admin/", admin.site.urls),
     # dashboard routes
     path("dashboard/", include("dashboard.urls")),
@@ -52,7 +52,8 @@ urlpatterns = [
     path(
         "",
         LoginView.as_view(
-            template_name="account/login.html", redirect_authenticated_user=True
+            template_name="account/login.html",
+            redirect_authenticated_user=True,
         ),
         name="login",
     ),
@@ -61,9 +62,15 @@ urlpatterns = [
         LogoutView.as_view(template_name="account/logout.html"),
         name="logout",
     ),
-	{%- if cookiecutter.has_blog == "y" %}
-	path("", include(("{{ cookiecutter.project_slug }}.apps.blog.urls", "blog"), namespace="blog")),
-	{% endif %}
+    {%- if cookiecutter.has_blog == "y" %}
+    path(
+        "",
+        include(
+            ("{{ cookiecutter.project_slug }}.apps.blog.urls", "blog"),
+            namespace="blog",
+        ),
+    ),
+    {%- endif %}
 ]
 
 urlpatterns += static(settings.STATIC_URL, document_root=settings.STATIC_ROOT)

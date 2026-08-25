@@ -1,6 +1,6 @@
 from django.urls import path
 
-from ..views import (
+from {{ cookiecutter.project_slug }}.apps.dashboard.views import (
     StaffCreateTemplateView,
     StaffDetailTemplateView,
     StaffListTemplateView,

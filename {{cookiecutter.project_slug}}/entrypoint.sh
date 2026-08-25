@@ -1,8 +1,8 @@
 #!/bin/bash
 
-poetry run python manage.py migrate                  # Apply database migrations
+python manage.py migrate                  # Apply database migrations
 
-poetry run python manage.py collectstatic --noinput  # Collect static files
+python manage.py collectstatic --noinput  # Collect static files
 
 # Prepare log files
 touch /deploy/gunicorn/logs/error.log

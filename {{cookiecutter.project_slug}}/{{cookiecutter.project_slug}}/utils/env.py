@@ -12,12 +12,12 @@ class {{ cookiecutter.class_name_prefix }}Env(environ.Env):
     """
 
     def get_value(
-        self, var, cast=None, default=environ.Env.NOTSET, parse_default=False
+        self, var, cast=None, default=environ.Env.NOTSET, parse_default=False,
     ):
         if default == self.NOTSET:
-            raise  {{ cookiecutter.class_name_prefix }}EnvNoDefaultException(
-                f"'{var}' does not have a default set, please set a default value"  # noqa: B907
+            raise {{ cookiecutter.class_name_prefix }}EnvNoDefaultException(
+                f"'{var}' does not have a default set, please set a default value",  # noqa: B907
             )
         return super().get_value(
-            var, cast=cast, default=default, parse_default=parse_default
+            var, cast=cast, default=default, parse_default=parse_default,
         )

@@ -1,5 +1,4 @@
 from django.contrib.auth import get_user_model
-from django.core.exceptions import ValidationError
 from django.db import models
 from django.urls import reverse_lazy
 from django.utils.translation import gettext_lazy as _
@@ -7,12 +6,12 @@ from model_utils.models import TimeStampedModel
 from taggit.managers import TaggableManager
 from tinymce.models import HTMLField
 
-from ...common.db.models import (
+from {{ cookiecutter.project_slug }}.common.db.models import (
     Publishable,
     UniqueSlugModel,
     unique_slug_generator,
 )
-from ...common.db.utils import upload_to_directory
+from {{ cookiecutter.project_slug }}.common.db.utils import upload_to_directory
 
 User = get_user_model()
 
@@ -21,7 +20,7 @@ class BaseContent(UniqueSlugModel, Publishable, TimeStampedModel):
     title = models.CharField(max_length=255)
     body = HTMLField(verbose_name="content")
     cover_image = models.ImageField(
-        upload_to=upload_to_directory, blank=True, null=True
+        upload_to=upload_to_directory, blank=True, null=True,
     )
     tags = TaggableManager(blank=True)
     uploaded_by = models.ForeignKey(
@@ -52,25 +51,25 @@ class ArticleCategory(UniqueSlugModel, TimeStampedModel):
 
     def get_absolute_url(self):
         return reverse_lazy(
-            "dashboard:articles:category_detail", kwargs={"slug": self.slug}
+            "dashboard:articles:category_detail", kwargs={"slug": self.slug},
         )
 
     def save(self, *args, **kwargs):
         if not self.slug:
             self.slug = unique_slug_generator(
-                *args, instance=self, field_names=[self.name], **kwargs
+                *args, instance=self, field_names=[self.name], **kwargs,
             )
         super().save(*args, **kwargs)
 
 
 class Blog(BaseContent):
     category = models.ForeignKey(
-        ArticleCategory, related_name="articles", on_delete=models.PROTECT, null=True
+        ArticleCategory, related_name="articles", on_delete=models.PROTECT, null=True,
     )
 
     def get_absolute_url(self):
         return reverse_lazy(
-            "dashboard:articles:article_detail", kwargs={"slug": self.slug}
+            "dashboard:articles:article_detail", kwargs={"slug": self.slug},
         )
 
     def __str__(self):
@@ -84,7 +83,7 @@ class Blog(BaseContent):
 class NewsletterSubscription(TimeStampedModel):
     email = models.EmailField(unique=True, verbose_name=_("Email"))
     subscribed_at = models.DateTimeField(
-        auto_now_add=True, verbose_name=_("Subscribed At")
+        auto_now_add=True, verbose_name=_("Subscribed At"),
     )
     is_active = models.BooleanField(default=True, verbose_name=_("Is Active"))
 

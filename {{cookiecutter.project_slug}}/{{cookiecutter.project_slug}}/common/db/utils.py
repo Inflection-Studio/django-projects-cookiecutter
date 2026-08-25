@@ -132,7 +132,7 @@ def publish_publishable_content(
             "modified",
             "published_at",
             "archived_at",
-        ]
+        ],
     )
     if http_redirec:
         messages.success(request, f"{type(publishable_content).__name__} Published")
@@ -150,7 +150,7 @@ def archive_publishable_content(
     publishable_content.modified = timezone.now()
     publishable_content.archived_at = timezone.now()
     publishable_content.save(
-        update_fields=["publication_status", "modified", "archived_at"]
+        update_fields=["publication_status", "modified", "archived_at"],
     )
     if http_redirec:
         messages.success(request, f"{type(publishable_content).__name__} Archived")
@@ -169,7 +169,7 @@ def draft_publishable_content(
     publishable_content.archived_at = timezone.now()
     publishable_content.archived_at = None
     publishable_content.save(
-        update_fields=["publication_status", "modified", "archived_at"]
+        update_fields=["publication_status", "modified", "archived_at"],
     )
     if http_redirec:
         messages.success(request, f"{type(publishable_content).__name__} Drafted")
@@ -204,7 +204,7 @@ def process_publication_state_change(
     # Validate that the model is a subclass of Publishable
     if not issubclass(model_class, Publishable):
         raise InvalidContentTypeError(
-            f"Expected a subclass of Publishable, but got {model_class.__name__!r}."
+            f"Expected a subclass of Publishable, but got {model_class.__name__!r}.",
         )
 
     # Validate the action and get the corresponding function
@@ -219,7 +219,7 @@ def process_publication_state_change(
     if not action_function:
         valid_actions = list(action_map.keys())
         raise ValueError(
-            f"Invalid action '{action!r}'. Must be one of {valid_actions}."
+            f"Invalid action '{action!r}'. Must be one of {valid_actions}.",
         )
 
     # Retrieve the object instance
@@ -238,7 +238,7 @@ def route_publication_action(request, action: str, pk: str | int, model_class, h
             action: The action to perform, derived from the URL.
             pk: The primary key of the object.
             model_class: The model class to operate on.
-            http_redirect (bool): Whether to redirect to the instance's 
+            http_redirect (bool): Whether to redirect to the instance's
             URL after performing the action.
 
     Returns:

@@ -1,10 +1,10 @@
 import uuid
 
-import django.db.models.deletion
-import django.utils.timezone
 {% if cookiecutter.username_type == "username" %}import django.contrib.auth.models
 import django.contrib.auth.validators
-{% else %}import login.managers
+{% endif %}import django.db.models.deletion
+import django.utils.timezone
+{% if cookiecutter.username_type == "email" %}import login.managers
 {% endif %}{% if cookiecutter.use_phone_numbers_field == "y" %}import phonenumber_field.modelfields
 {% endif %}import simple_history.models
 from django.conf import settings

@@ -36,5 +36,5 @@ class ConditionalPagination(ResultsPagination):
                 'count': len(data),
                 'next': None,
                 'previous': None,
-                'results': data
+                'results': data,
             })

@@ -21,7 +21,7 @@ def unique_slug_generator(instance, new_slug: str = None, field_names: list = No
     else:
         if field_names is None or not field_names:
             field_names = [
-                "title"
+                "title",
             ]  # Default to the "title" field if none are specified
 
         # Resolve field names to their values; if a value literal is passed,
@@ -54,7 +54,7 @@ def unique_slug_generator(instance, new_slug: str = None, field_names: list = No
     if qs_exists:
         new_slug = f"{slug[: max_length - 7]}-{get_random_string(length=6)}"
         return unique_slug_generator(
-            instance, new_slug=new_slug, field_names=field_names
+            instance, new_slug=new_slug, field_names=field_names,
         )
 
     return slug
@@ -90,10 +90,10 @@ class Publishable(models.Model):
         default=common_db_constants.PublicationStatusChoices.DRAFT,
     )
     published_at = models.DateTimeField(
-        verbose_name=_("Published At"), null=True, blank=True
+        verbose_name=_("Published At"), null=True, blank=True,
     )
     archived_at = models.DateTimeField(
-        verbose_name=_("Archived At"), null=True, blank=True
+        verbose_name=_("Archived At"), null=True, blank=True,
     )
 
     objects = PublishableManager()

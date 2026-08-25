@@ -3,7 +3,6 @@ from django.contrib.auth import get_user_model
 
 from {{ cookiecutter.project_slug }}.apps.login.tests.factories import UserFactory
 
-
 pytestmark = pytest.mark.django_db
 
 
