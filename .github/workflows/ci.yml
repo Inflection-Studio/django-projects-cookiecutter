@@ -30,3 +30,60 @@ jobs:
           poetry run ruff format --check hooks tests
       - name: Test template generation
         run: poetry run pytest
+
+  generated-project-smoke:
+    needs: test
+    runs-on: ubuntu-latest
+    timeout-minutes: 20
+    env:
+      DJANGO_SETTINGS_MODULE: ci_smoke_project.conf.settings.test
+      SMOKE_IMAGE: cookiecutter-django-smoke:ci
+    steps:
+      - uses: actions/checkout@v5
+      - uses: actions/setup-python@v5
+        with:
+          python-version: "3.13"
+      - uses: snok/install-poetry@v1
+        with:
+          version: "2.4.1"
+          virtualenvs-create: true
+          virtualenvs-in-project: true
+      - name: Install template dependencies
+        run: poetry install --no-interaction
+      - name: Generate Docker project
+        run: |
+          mkdir -p "${{ runner.temp }}/cookiecutter-smoke"
+          poetry run cookiecutter . \
+            --no-input \
+            --output-dir "${{ runner.temp }}/cookiecutter-smoke" \
+            project_name="CI Smoke Project" \
+            use_docker=y
+      - name: Install generated project dependencies
+        working-directory: ${{ runner.temp }}/cookiecutter-smoke/ci_smoke_project
+        run: poetry install --no-interaction --no-root
+      - name: Run generated Django smoke tests
+        working-directory: ${{ runner.temp }}/cookiecutter-smoke/ci_smoke_project
+        run: |
+          poetry run python manage.py check
+          poetry run python manage.py makemigrations --check --dry-run
+          poetry run pytest
+      - name: Validate generated Compose configuration
+        working-directory: ${{ runner.temp }}/cookiecutter-smoke/ci_smoke_project
+        run: |
+          cp .env.example .env
+          docker compose -f docker-compose.yml -f docker-compose.dev.yml config --quiet
+          docker compose -f docker-compose.yml -f docker-compose.staging.yml config --quiet
+      - name: Build generated Docker image
+        working-directory: ${{ runner.temp }}/cookiecutter-smoke/ci_smoke_project
+        run: docker build --tag "${SMOKE_IMAGE}" .
+      - name: Run generated Docker smoke tests
+        run: |
+          docker run --rm \
+            --entrypoint python \
+            --env "DJANGO_SETTINGS_MODULE=${DJANGO_SETTINGS_MODULE}" \
+            "${SMOKE_IMAGE}" \
+            manage.py check
+          docker run --rm \
+            --entrypoint python \
+            "${SMOKE_IMAGE}" \
+            -c 'import shutil; import django; import gunicorn; import psycopg2; assert shutil.which("poetry") is None; assert shutil.which("gcc") is None'

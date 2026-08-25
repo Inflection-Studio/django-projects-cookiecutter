@@ -1,0 +1,36 @@
+# Keep the Cookiecutter template repository's dependencies current.
+version: 2
+
+updates:
+  # Poetry dependencies used to maintain and test the template.
+  - package-ecosystem: "pip"
+    directory: "/"
+    schedule:
+      interval: "weekly"
+    groups:
+      maintainer-dependencies:
+        patterns:
+          - "*"
+
+  # Actions used by the template repository's own workflows.
+  - package-ecosystem: "github-actions"
+    directory: "/"
+    schedule:
+      interval: "weekly"
+    groups:
+      github-actions:
+        patterns:
+          - "*"
+
+  # Base images referenced by Dockerfiles in the project template.
+  - package-ecosystem: "docker"
+    directories:
+      - "/{{cookiecutter.project_slug}}"
+      - "/{{cookiecutter.project_slug}}/deploy/nginx"
+      - "/{{cookiecutter.project_slug}}/deploy/postgres"
+    schedule:
+      interval: "weekly"
+    groups:
+      docker-images:
+        patterns:
+          - "*"
