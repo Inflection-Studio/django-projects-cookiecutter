@@ -6,7 +6,7 @@ Remember to update `{{ cookiecutter.project_slug }}.conf.settings.live` if neces
 from .common import *
 
 # Database
-# https://docs.djangoproject.com/en/5.0/ref/settings/#databases
+# https://docs.djangoproject.com/en/6.1/ref/settings/#databases
 
 DATABASES = {
     "default": {
@@ -15,8 +15,10 @@ DATABASES = {
     }
 }
 
-# Email
-EMAIL_BACKEND = "django.core.mail.backends.locmem.EmailBackend"
-
-if USE_SMTP:
-    EMAIL_BACKEND = "django.core.mail.backends.smtp.EmailBackend"
+# Keep local mail in memory unless SMTP was explicitly enabled in common settings.
+if not USE_SMTP:
+    MAILERS = {
+        "default": {
+            "BACKEND": "django.core.mail.backends.locmem.EmailBackend",
+        },
+    }

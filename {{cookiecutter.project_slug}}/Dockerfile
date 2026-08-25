@@ -1,12 +1,11 @@
-FROM python:3.13.0-slim AS base
+FROM python:3.13-slim AS base
 
-RUN apt-get update && apt-get install -y \
+RUN apt-get update && apt-get install -y --no-install-recommends \
     libpq-dev \
     gcc \
     libc-dev \
     libffi-dev \
     libssl-dev \
-    curl \
     make \
     && apt-get clean \
     && rm -rf /var/lib/apt/lists/*
@@ -14,28 +13,21 @@ RUN apt-get update && apt-get install -y \
 
 ARG DJANGO_SETTINGS_MODULE={{cookiecutter.project_slug}}.conf.settings.live
 
-ENV PYTHONUNBUFFERED 1 \
+ENV PYTHONDONTWRITEBYTECODE=1 \
+    PYTHONUNBUFFERED=1 \
     DJANGO_SETTINGS_MODULE=${DJANGO_SETTINGS_MODULE} \
-    POETRY_VERSION=2.1.1
+    POETRY_VERSION=2.4.1 \
+    POETRY_NO_INTERACTION=1 \
+    POETRY_VIRTUALENVS_CREATE=false
 
 WORKDIR /code
 
-# Ensure Poetry is in the PATH
-ENV PYTHONPATH=${PYTHONPATH}:${PWD} \
-    PATH="${POETRY_HOME}/bin:${PATH}"
-
-# Upgrade pip to the latest version to stop any error messages
-RUN python3 -m pip install -U pip
-
-# Install Poetry and create a symlink to make it globally accessible
-RUN curl -sSL https://install.python-poetry.org | python3 -
-ENV PATH="/root/.local/bin:$PATH"
+RUN python -m pip install --no-cache-dir "poetry==${POETRY_VERSION}"
 
 COPY pyproject.toml \
      poetry.lock \
      Makefile \
     /code/
-
 
 COPY ./entrypoint.sh /code/entrypoint.sh
 

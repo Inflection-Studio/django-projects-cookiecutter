@@ -1,136 +1,116 @@
-# {{ cookiecutter.project_name }} Platform
+# {{ cookiecutter.project_name }}
 
-> Main Repository for Backend Web App and API for {{ cookiecutter.project_name }} platform
+{{ cookiecutter.project_description }}
 
-1. [Requirements](#requirements)
-2. [Setup](#setup)
-3. [Usage](#usage)
-4. [Development](#development)
+This project uses Django 6.1, Python 3.13, and Poetry for dependency
+management.
 
 ## Requirements
 
-**This project uses Docker Compose to manage multiple services.
-Make sure you have Docker and Docker Compose installed on your machine.**
+- Python 3.13
+- Poetry 2.4 or newer
+- Git
+{% if cookiecutter.use_docker == "y" %}- Docker with Docker Compose
+{% endif %}
 
-1. Python 3.12.0 installed
-2. Text editor such as [vs code](https://code.visualstudio.com/) or sublime text
-3. Git - preferrably use terminal like [gitbash](https://gitforwindows.org/)
-4. Poetry dependency manager - See the [Poetry setup instructions](https://python-poetry.org/docs/)
+## Local setup
 
-## Setup
+1. Create the local environment file:
 
-1. Clone the repository.
-2. Change directory to the location of this repository.
-3. Create a `.env` file using the included `.env.example` as an example.
-4. Generate a secret key for your app and paste into the SECRET_KEY section of .env file
-you can generate the key with the [Djecrety secret key generator](https://djecrety.ir/)
-5. Create and start your preferred Python virtual environment. For
-more information on how to set up a virtual environment, check the instructions on [this link](https://tutorial.djangogirls.org/en/django_installation/). Install the required libraries by running the commands below, by changing to
-the project directory.
+   ```bash
+   cp .env.example .env
+   ```
 
-        make deps
+2. Generate a Django secret key and add it to `SECRET_KEY` in `.env`:
 
-6. After installation, run the following command:
+   ```bash
+   python -c "from secrets import token_urlsafe; print(token_urlsafe(50))"
+   ```
 
-       make migrate
+3. Install the dependencies, apply migrations, and create an administrator:
 
-7. A local ```dbsqlite``` file will be generate at the root of the project.
-8. Create a superuser by running the ``make superuser`` and fill in the details.
-9. After creating superuser run ``make runserver`` open the browser and run  ``127.0.0.1:8000/admin`` , login with the credentials created.
-10. For details of how to get started with django, check out [this link](https://www.djangoproject.com/start/)
-11. In order to work with a virtual environment, check out [this link](https://tutorial.djangogirls.org/en/installation/#pythonanywhere)
+   ```bash
+   make deps
+   make migrate
+   make superuser
+   ```
 
-## Usage
+4. Start the development server:
 
-To run locally:
+   ```bash
+   make runserver
+   ```
 
-    make runserver
+The application is available at <http://127.0.0.1:8000/> and Django admin at
+<http://127.0.0.1:8000/admin/>.
 
-### Docker Workflows
+## Common commands
 
-This template uses a base Compose file plus environment-specific overrides:
+```bash
+make test             # Run the test suite
+make migrations       # Create migrations after model changes
+make migrate          # Apply migrations
+make shell            # Open Django shell_plus
+make show_urls         # List registered URLs
+make fmt-all           # Run all pre-commit checks and fixes
+make hooks             # Install the Git pre-commit hook
+```
 
-- `docker-compose.yml`: base deployment-oriented stack
-- `docker-compose.dev.yml`: local development overrides such as `watch` and `pgadmin`
-- `docker-compose.staging.yml`: staging-only overrides
+Run a focused test directly with Poetry:
 
-Common stack commands:
+```bash
+poetry run pytest {{ cookiecutter.project_slug }}/apps/login/tests/test_models.py
+```
+{% if cookiecutter.use_docker == "y" %}
 
-    make docker-deploy
-    make docker-dev
-    make docker-staging
-    make docker-staging-build
+## Docker workflows
 
-Run specific services:
+The base Compose file defines Django, PostgreSQL, and nginx. Development and
+staging behavior is layered on through override files.
 
-    docker compose -f docker-compose.yml up -d web
-    docker compose -f docker-compose.yml up -d postgres nginx
-    docker compose -f docker-compose.yml -f docker-compose.dev.yml up -d web
-    docker compose -f docker-compose.yml -f docker-compose.staging.yml up -d web
+```bash
+make docker-dev            # Development stack with Compose watch
+make docker-deploy         # Image-based deployment stack
+make docker-staging        # Staging stack with source mounts
+make docker-staging-build  # Rebuild and start the staging stack
+make docker-down           # Stop the development stack
+```
 
-Rebuild a specific service:
+Always place the base file first when invoking Compose directly:
 
-    docker compose -f docker-compose.yml up -d --build web
-    docker compose -f docker-compose.yml -f docker-compose.dev.yml up -d --build nginx
+```bash
+docker compose -f docker-compose.yml -f docker-compose.dev.yml config
+```
+{% endif %}
 
-Restart a specific service:
+## Project layout
 
-    docker compose -f docker-compose.yml restart web
-    docker compose -f docker-compose.yml -f docker-compose.dev.yml restart nginx
-    docker compose -f docker-compose.yml -f docker-compose.staging.yml restart postgres
+- `{{ cookiecutter.project_slug }}/apps/`: project-owned Django apps.
+- `{{ cookiecutter.project_slug }}/common/`: reusable Django and database
+  helpers.
+- `{{ cookiecutter.project_slug }}/conf/settings/`: local, test, staging, and
+  live settings.
+- `templates/`: shared server-rendered templates.
+- `mixins/`: reusable view mixins.
+- `AGENTS.md`: repository guidance for coding agents and contributors.
 
-The staging override bind-mounts the project code and nginx config back into the containers, so minor source changes can be picked up with a restart:
+{% if cookiecutter.username_type == "email" %}Authentication uses email as the
+login identifier. Avoid adding username assumptions to forms, views, or APIs.
+{% else %}Authentication uses Django's username field; email is collected as an
+additional user attribute.
+{% endif %}
 
-    docker compose -f docker-compose.yml -f docker-compose.staging.yml restart web
-    docker compose -f docker-compose.yml -f docker-compose.staging.yml restart nginx
+## Configuration and deployment
 
-Production remains image-based. In production, `restart` only restarts the existing container. It does not rebuild the image or pick up source-code changes from the host. If you change Django code or settings modules there, rebuild the affected service instead:
+Copy `.env.example` for each environment and replace every placeholder before
+starting the application. Never commit `.env` files or credentials.
 
-    docker compose -f docker-compose.yml -f docker-compose.staging.yml up -d --build web
+For deployment, set `ENVIRONMENT=prd`, use the live settings module, set
+`DEBUG=False`, configure trusted hosts, and provide PostgreSQL and mail
+credentials. Run Django's deployment checks before release:
 
-For deployment environments, keep hostnames and similar runtime settings in `.env`, for example:
+```bash
+poetry run python manage.py check --deploy
+```
 
-    ALLOWED_HOSTS=staging-api.example.com,api.example.com,example.com
-
-Start an already-created stopped service:
-
-    docker compose -f docker-compose.yml start web
-    docker compose -f docker-compose.yml -f docker-compose.dev.yml start pgadmin
-
-When using an override file, always include the base file first. The override file is not meant to run on its own.
-
-## Development
-
-Ensure you have t installed globally by running `pre-commit install` for pre-commit hooks to run.
-
-Pull the latest main version:
-
-    git pull origin main
-
-Create local development branch and switch to it:
-
-    git branch {feature_branch_name}
-    git checkout {feature_branch_name}
-
-Make desired changes then commit the branch.
-
-    git add .
-    git commit -m "changes to {feature_branch_name}"
-    git push origin {feature_branch_name}
-
-**If using poetry for dependency management, you can pip freeze them to a `requirements.txt` file by running**
-
-    pip --disable-pip-version-check list --format=freeze > requirements.txt
-
-### Creating an App
-
-To create a new Django app, run the following command
-
-    make app APP_NAME={app_name}
-
-Add the newly created app to the list of `INSTALLED_APPS` on the `{{cookiecutter.project_slug}}.conf.settings.common.py` file
-under the `LOCAL_APPS_LIST`
-
-    LOCAL_APPS = [
-        "{{cookiecutter.project_slug}}.apps.{app_name}.apps.{AppName}Config",
-    ]
+See `AGENTS.md` for architecture, testing, migration, and safety conventions.

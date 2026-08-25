@@ -16,6 +16,9 @@ Dockerfile
 .git
 .hg
 .svn
+.env
+.env.*
+!.env.example
 app.*.yaml
 env.yaml
 db.*

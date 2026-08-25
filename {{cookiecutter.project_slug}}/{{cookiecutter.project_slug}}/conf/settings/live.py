@@ -7,7 +7,7 @@ Similar to `{{ cookiecutter.project_slug }}.conf.settings.local` but with defaul
 from .common import *
 
 # Database
-# https://docs.djangoproject.com/en/4.2/ref/settings/#databases
+# https://docs.djangoproject.com/en/6.1/ref/settings/#databases
 
 DATABASES = {
     "default": {

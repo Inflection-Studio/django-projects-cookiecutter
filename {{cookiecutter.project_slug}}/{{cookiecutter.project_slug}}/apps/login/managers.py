@@ -1,6 +1,5 @@
 from django.contrib.auth.hashers import make_password
 from django.contrib.auth.models import UserManager
-from django.db import models
 
 
 class CustomUserManager(UserManager):
@@ -36,9 +35,3 @@ class CustomUserManager(UserManager):
             raise ValueError(msg)
 
         return self._create_user(email, password, **extra_fields)
-
-    def get_by_natural_key(self, username):
-        return self.get(
-            models.Q(**{self.model.USERNAME_FIELD: username})
-            | models.Q(**{self.model.EMAIL_FIELD: username})
-        )
