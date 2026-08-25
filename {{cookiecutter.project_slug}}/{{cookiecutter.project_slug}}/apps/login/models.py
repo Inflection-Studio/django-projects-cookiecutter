@@ -9,7 +9,9 @@ from phonenumber_field.modelfields import PhoneNumberField
 {%- endif %}
 from simple_history.models import HistoricalRecords
 
+{%- if cookiecutter.username_type == "email" %}
 from .managers import CustomUserManager
+{%- endif %}
 
 
 # Create your models here.
@@ -23,18 +25,21 @@ class UserAccount(AbstractUser):
     {%- if cookiecutter.username_type == "email" %}
     email = models.EmailField(_("Email address"), unique=True)
     username = None
-    
+
     USERNAME_FIELD = "email"
-    {% endif %}
+    {%- endif %}
 
     REQUIRED_FIELDS = [
+        {%- if cookiecutter.username_type == "username" %}
+        "email",
+        {%- endif %}
         "first_name",
         "last_name",
     ]
 
+    {%- if cookiecutter.username_type == "email" %}
     objects = CustomUserManager()
-
-
+    {%- endif %}
 
     class Meta:
         verbose_name = _("User Account")
@@ -42,7 +47,7 @@ class UserAccount(AbstractUser):
         ordering = ("-date_joined",)
 
     def __str__(self) -> str:
-        return self.get_full_name()
+        return self.get_full_name() or self.get_username()
 
     def get_absolute_url(self):
         return reverse("dashboard:login:staff_details", kwargs={"pk": self.pk})

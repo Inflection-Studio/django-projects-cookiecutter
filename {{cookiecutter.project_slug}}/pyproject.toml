@@ -8,34 +8,33 @@ package-mode = false
 
 [tool.poetry.dependencies]
 python = "^3.13"
-django = "^6.0.5"
-django-filter = "^25.1"
-pillow = "^11.2.1"
-django-allauth = "^65.8.0"
-django-bootstrap-datepicker-plus = "^5.0.5"
-django-environ = "^0.12.0"
+django = ">=6.1,<6.2"
+django-filter = ">=25.2,<27.0"
+pillow = "^12.2.0"
+django-allauth = "^65.15.1"
+django-bootstrap-datepicker-plus = "^6.0.0"
+django-environ = ">=0.13,<0.15"
 django-model-utils = "^5.0.0"
 {%- if cookiecutter.has_blog == "y" or cookiecutter.has_tags == 'y' %}
 django-taggit = "^6.1.0"
 django-tinymce = "^4.1.0"
 {% endif %}
 {%- if cookiecutter.use_drf == "y" %}
-django-cors-headers = "^4.7.0"
-djangorestframework = "^3.16.0"
-drf-spectacular = "^0.27.2"
-drf-spectacular-sidecar = "^2024.5.1"
+django-cors-headers = "^4.9.0"
+djangorestframework = "^3.17.1"
+drf-spectacular = ">=0.29,<0.31"
+drf-spectacular-sidecar = "^2026.3.1"
 {%- endif %}
-django-extensions = "^3.2.3"
+django-extensions = "^4.1"
 {%- if cookiecutter.use_phone_numbers_field == 'y' %}
-django-phonenumber-field = {version = "^8.0.0", extras = ["phonenumberslite"]}
+django-phonenumber-field = {version = "^8.3.0", extras = ["phonenumberslite"]}
 {%- endif %}
-django-simple-history = "^3.8.0"
-django-widget-tweaks = "^1.5.0"
-gunicorn = "^23.0.0"
+django-simple-history = "^3.11.0"
+django-widget-tweaks = "^1.5.1"
+gunicorn = ">=25.2,<27.0"
 psycopg2-binary = "^2.9.10"
-ipython = "^9.0.2"
-django-bootstrap4 = "^24.3"
-ruff = "^0.15.16"
+ipython = "^9.11.0"
+django-bootstrap4 = "^26.1"
 
 {%- if cookiecutter.use_martor_editor == 'y' %}
 martor = "^1.6.45"
@@ -43,15 +42,21 @@ martor = "^1.6.45"
 
 
 [tool.poetry.group.test.dependencies]
-pytest = "^9.0.3"
-pytest-django = "^4.9.0"
-factory-boy = "^3.3.1"
-pytest-cov = "^6.0.0"
+pytest = "^9.1.1"
+pytest-django = "^4.12.0"
+factory-boy = "^3.3.3"
+pytest-cov = "^7.1"
 coverage = {extras = ["toml"], version = "^7.0.0"}
+
+[tool.pytest.ini_options]
+DJANGO_SETTINGS_MODULE = "{{ cookiecutter.project_slug }}.conf.settings.test"
+python_files = ["tests.py", "test_*.py", "*_tests.py"]
+addopts = "--reuse-db"
 
 
 [tool.poetry.group.dev.dependencies]
-pre-commit = "^4.6.0"
+pre-commit = "^4.6.2"
+ruff = "^0.16.4"
 
 [build-system]
 requires = ["poetry-core"]

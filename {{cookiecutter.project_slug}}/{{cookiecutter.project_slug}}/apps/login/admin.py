@@ -11,6 +11,9 @@ class UserAdmin(DjangoUserAdmin):
     model = User
     list_display = (
         "id",
+        {%- if cookiecutter.username_type == "username" %}
+        "username",
+        {%- endif %}
         "email",
         "first_name",
         "last_name",
@@ -19,10 +22,27 @@ class UserAdmin(DjangoUserAdmin):
         "is_superuser",
     )
     list_filter = ("is_active", "is_staff", "is_superuser")
-    search_fields = ("email", "first_name", "last_name")
+    search_fields = (
+        {%- if cookiecutter.username_type == "username" %}
+        "username",
+        {%- endif %}
+        "email",
+        "first_name",
+        "last_name",
+    )
     fieldsets = (
-        (None, {"fields": ("email", "password")}),
-        (_("Personal info"), {"fields": ("first_name", "last_name")}),
+        (
+            None,
+            {
+                "fields": (
+                    {%- if cookiecutter.username_type == "username" %}
+                    "username",
+                    {%- endif %}
+                    "password",
+                )
+            },
+        ),
+        (_("Personal info"), {"fields": ("first_name", "last_name", "email")}),
         (
             _("Permissions"),
             {
@@ -44,6 +64,9 @@ class UserAdmin(DjangoUserAdmin):
             {
                 "classes": ("wide",),
                 "fields": (
+                    {%- if cookiecutter.username_type == "username" %}
+                    "username",
+                    {%- endif %}
                     "email",
                     "password1",
                     "password2",

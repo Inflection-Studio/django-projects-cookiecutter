@@ -1,0 +1,8 @@
+services:
+  web:
+    volumes:
+      - .:/code
+
+  nginx:
+    volumes:
+      - ./deploy/nginx/:/etc/nginx/conf.d

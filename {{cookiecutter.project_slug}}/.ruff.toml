@@ -3,12 +3,8 @@
 # Set the maximum line length to 79.
 line-length = 79
 
-# Add the `line-too-long` rule to the enforced rule set. By default, Ruff omits rules that
-# overlap with the use of a formatter, like Black, but we can override this behavior by
-# explicitly adding the rule.
-extend-select = ["E501"]
-
 [lint]
+extend-select = ["E501"]
 select = [
         "ARG", # flake8-unused-arguments
         "B", # flake8-bugbear
@@ -40,7 +36,7 @@ known-third-party = [
     "rest_framework",
     {%- endif %}
     "simple_history",
-    {%- if cookiecutter.has_blog == "y" or  cookiecutter.has_tags %}
+    {%- if cookiecutter.has_blog == "y" or cookiecutter.has_tags == "y" %}
     "taggit",
     "tinymce",
     {%- endif %}
@@ -48,7 +44,7 @@ known-third-party = [
 
 [format]
 quote-style = "double"
-indent-style = "tab"
+indent-style = "space"
 
 [lint.mccabe]   # DO NOT INCREASE THIS VALUE
 max-complexity = 18  # default: 10

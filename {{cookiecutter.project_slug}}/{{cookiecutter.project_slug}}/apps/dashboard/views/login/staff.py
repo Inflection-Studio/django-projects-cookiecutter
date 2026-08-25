@@ -13,6 +13,9 @@ class StaffCreateTemplateView(AdminDashBoardMixin, CreateView):
     template_name = "dashboard/login/staff/form.html"
     success_message = "Staff Created Successfully"
     fields = [
+        {%- if cookiecutter.username_type == "username" %}
+        "username",
+        {%- endif %}
         "first_name",
         "last_name",
         "email",
@@ -51,6 +54,9 @@ class StaffUpdateTemplateView(AdminDashBoardMixin, UpdateView):
     context_object_name = "staff"
     success_message = "Staff Updated Successfully"
     fields = [
+        {%- if cookiecutter.username_type == "username" %}
+        "username",
+        {%- endif %}
         "first_name",
         "last_name",
         "email",
