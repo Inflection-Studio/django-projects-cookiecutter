@@ -13,8 +13,8 @@ jobs:
   test:
     runs-on: ubuntu-latest
     steps:
-      - uses: actions/checkout@v5
-      - uses: actions/setup-python@v5
+      - uses: actions/checkout@v7
+      - uses: actions/setup-python@v7
         with:
           python-version: "3.13"
       - uses: snok/install-poetry@v1
@@ -39,8 +39,8 @@ jobs:
       DJANGO_SETTINGS_MODULE: ci_smoke_project.conf.settings.test
       SMOKE_IMAGE: cookiecutter-django-smoke:ci
     steps:
-      - uses: actions/checkout@v5
-      - uses: actions/setup-python@v5
+      - uses: actions/checkout@v7
+      - uses: actions/setup-python@v7
         with:
           python-version: "3.13"
       - uses: snok/install-poetry@v1
