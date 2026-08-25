@@ -66,6 +66,34 @@ def assert_optional_files(project_path: Path, context: dict[str, str]) -> None:
     assert (package / "apps" / "login" / "migrations" / "0001_initial.py").is_file()
 
 
+def assert_dependabot_config(project_path: Path, context: dict[str, str]) -> None:
+    config_path = project_path / ".github" / "dependabot.yml"
+    config = yaml.safe_load(config_path.read_text())
+    updates = config["updates"]
+    ecosystems = [update["package-ecosystem"] for update in updates]
+    use_docker = context.get("use_docker", "n") == "y"
+
+    assert ecosystems.count("github-actions") == 1
+    assert ecosystems.count("pip") == 1
+    assert ecosystems.count("docker") == (2 if use_docker else 0)
+    assert ecosystems.count("docker-compose") == (1 if use_docker else 0)
+
+    if use_docker:
+        docker_updates = [
+            update for update in updates if update["package-ecosystem"] == "docker"
+        ]
+        assert docker_updates[0]["directory"] == "/"
+        assert set(docker_updates[1]["directories"]) == {
+            "/deploy/nginx",
+            "/deploy/postgres",
+        }
+
+    codeql_workflow = (
+        project_path / ".github" / "workflows" / "codeql.yml"
+    ).read_text()
+    assert "${{ matrix.language }}" in codeql_workflow
+
+
 @pytest.mark.parametrize(
     "extra_context",
     [
@@ -90,6 +118,7 @@ def test_supported_combinations_render(cookies, extra_context):
     assert_python_parses(project_path)
     assert_yaml_parses(project_path)
     assert_optional_files(project_path, extra_context)
+    assert_dependabot_config(project_path, extra_context)
     assert_ruff_clean(project_path)
 
 
