@@ -36,7 +36,6 @@ jobs:
     runs-on: ubuntu-latest
     timeout-minutes: 20
     env:
-      GENERATED_PROJECT: ${{ runner.temp }}/cookiecutter-smoke/ci_smoke_project
       DJANGO_SETTINGS_MODULE: ci_smoke_project.conf.settings.test
       SMOKE_IMAGE: cookiecutter-django-smoke:ci
     steps:
@@ -60,22 +59,22 @@ jobs:
             project_name="CI Smoke Project" \
             use_docker=y
       - name: Install generated project dependencies
-        working-directory: ${{ env.GENERATED_PROJECT }}
+        working-directory: ${{ runner.temp }}/cookiecutter-smoke/ci_smoke_project
         run: poetry install --no-interaction --no-root
       - name: Run generated Django smoke tests
-        working-directory: ${{ env.GENERATED_PROJECT }}
+        working-directory: ${{ runner.temp }}/cookiecutter-smoke/ci_smoke_project
         run: |
           poetry run python manage.py check
           poetry run python manage.py makemigrations --check --dry-run
           poetry run pytest
       - name: Validate generated Compose configuration
-        working-directory: ${{ env.GENERATED_PROJECT }}
+        working-directory: ${{ runner.temp }}/cookiecutter-smoke/ci_smoke_project
         run: |
           cp .env.example .env
           docker compose -f docker-compose.yml -f docker-compose.dev.yml config --quiet
           docker compose -f docker-compose.yml -f docker-compose.staging.yml config --quiet
       - name: Build generated Docker image
-        working-directory: ${{ env.GENERATED_PROJECT }}
+        working-directory: ${{ runner.temp }}/cookiecutter-smoke/ci_smoke_project
         run: docker build --tag "${SMOKE_IMAGE}" .
       - name: Run generated Docker smoke tests
         run: |
