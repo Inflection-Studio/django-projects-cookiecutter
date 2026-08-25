@@ -1,9 +1,63 @@
 version: 2
 updates:
-  # Poetry https://docs.github.com/en/code-security/dependabot/dependabot-version-updates/configuration-options-for-the-dependabot.yml-file#package-ecosystem
+  # Keep workflow actions current.
+  - package-ecosystem: "github-actions"
+    directory: "/"
+    schedule:
+      interval: "daily"
+    groups:
+      github-actions:
+        patterns:
+          - "*"
+
+  # Poetry projects use Dependabot's pip ecosystem.
   - package-ecosystem: "pip"
     directory: "/"
     schedule:
       interval: "daily"
+    groups:
+      python:
+        update-types:
+          - "minor"
+          - "patch"
     pull-request-branch-name:
       separator: "_"
+
+{% if cookiecutter.use_docker == "y" %}
+  # Keep the Python base image on its selected minor release.
+  - package-ecosystem: "docker"
+    directory: "/"
+    schedule:
+      interval: "daily"
+    ignore:
+      - dependency-name: "*"
+        update-types:
+          - "version-update:semver-major"
+          - "version-update:semver-minor"
+    groups:
+      docker-python:
+        patterns:
+          - "*"
+
+  # Track the deployment service images separately from the application image.
+  - package-ecosystem: "docker"
+    directories:
+      - "/deploy/nginx"
+      - "/deploy/postgres"
+    schedule:
+      interval: "daily"
+    groups:
+      docker-services:
+        patterns:
+          - "*"
+
+  # Scan all Compose files in the project root.
+  - package-ecosystem: "docker-compose"
+    directory: "/"
+    schedule:
+      interval: "daily"
+    groups:
+      docker-compose:
+        patterns:
+          - "*"
+{% endif %}

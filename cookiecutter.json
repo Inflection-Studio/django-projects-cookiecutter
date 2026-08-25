@@ -40,7 +40,7 @@
   "_copy_without_render": [
     "*.html",
     "*{{cookiecutter.project_slug}}/apps/dashboard/static/vendor",
-    "*.github",
+    "*.github/workflows",
     "*.js",
     "*.json",
     "*.map"
