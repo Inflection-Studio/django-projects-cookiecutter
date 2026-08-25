@@ -26,5 +26,5 @@ class ArticleCategoryListAPIView(generics.ListAPIView):
             published_articles_count=Count(
                 "articles",
                 filter=Q(articles__publication_status=PublicationStatusChoices.PUBLISHED),
-            )
+            ),
         ).filter(published_articles_count__gt=0)

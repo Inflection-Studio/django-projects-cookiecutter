@@ -11,10 +11,12 @@ from django.views.generic import (
 )
 
 from {{ cookiecutter.project_slug }}.apps.blog import forms, models
-
-from {{ cookiecutter.project_slug }}.apps.blog.analytics.utils import get_model_publication_analytics
-from {{ cookiecutter.project_slug }}.common.db.utils import route_publication_action
+from {{ cookiecutter.project_slug }}.apps.blog.analytics.utils import (
+    get_model_publication_analytics,
+)
 from {{ cookiecutter.project_slug }}.common.db.constants import PublicationStatusChoices
+from {{ cookiecutter.project_slug }}.common.db.utils import route_publication_action
+
 from mixins.dashboard import AdminDashBoardMixin, PublishableContentMixin
 
 User = get_user_model()
@@ -57,16 +59,20 @@ class ArticleListView(AdminDashBoardMixin, ListView):
         # Add the lazy analytics object to the context
         publication_analytics = self.article_analytics
         context["draft_articles_count"] = publication_analytics.get(
-            PublicationStatusChoices.DRAFT, 0
+            PublicationStatusChoices.DRAFT,
+            0,
         )
         context["published_articles_count"] = publication_analytics.get(
-            PublicationStatusChoices.PUBLISHED, 0
+            PublicationStatusChoices.PUBLISHED,
+            0,
         )
         context["unpublished_articles_count"] = publication_analytics.get(
-            PublicationStatusChoices.UNPUBLISHED, 0
+            PublicationStatusChoices.UNPUBLISHED,
+            0,
         )
         context["archived_articles_count"] = publication_analytics.get(
-            PublicationStatusChoices.ARCHIVED, 0
+            PublicationStatusChoices.ARCHIVED,
+            0,
         )
         context["all_articles_count"] = (
             publication_analytics.get(PublicationStatusChoices.DRAFT, 0)
@@ -112,7 +118,10 @@ def handle_article_action(request, action: str, pk: str | int):
             Http404: If the action is not valid.
     """
     return route_publication_action(
-        request=request, action=action, pk=pk, model_class=models.Blog
+        request=request,
+        action=action,
+        pk=pk,
+        model_class=models.Blog,
     )
 
 
@@ -181,7 +190,8 @@ class ArticleCategoryArticleCreateView(AdminDashBoardMixin, CreateView):
         """Initialize ArticleCategory when the view is setup"""
         super().setup(request, *args, **kwargs)
         self.article_category = get_object_or_404(
-            models.ArticleCategory, slug=kwargs["slug"]
+            models.ArticleCategory,
+            slug=kwargs["slug"],
         )
 
     def get_context_data(self, **kwargs):
@@ -192,7 +202,7 @@ class ArticleCategoryArticleCreateView(AdminDashBoardMixin, CreateView):
                 "model_namespace": "category",
                 "title": f"Add {article_category.name.title()} Article",
                 "article_category": article_category,
-            }
+            },
         )
         return context
 

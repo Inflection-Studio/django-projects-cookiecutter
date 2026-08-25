@@ -1,7 +1,9 @@
 from django.contrib import admin
 
-from .models import ArticleCategory, Blog, NewsletterSubscription
 from {{ cookiecutter.project_slug }}.utils.admin import UploadedByAdminMixin
+
+from .models import ArticleCategory, Blog, NewsletterSubscription
+
 
 @admin.register(Blog)
 class BlogAdmin(UploadedByAdminMixin):
@@ -34,5 +36,6 @@ class ArticlecategoryAdmin(admin.ModelAdmin):
 @admin.register(NewsletterSubscription)
 class NewsletterubscriptionAdmin(admin.ModelAdmin):
     """Admin configuration for the newsletter subscription models."""
+
     list_display = ("email", "subscribed_at", "is_active")
-    list_filter = ('is_active',)
+    list_filter = ("is_active",)

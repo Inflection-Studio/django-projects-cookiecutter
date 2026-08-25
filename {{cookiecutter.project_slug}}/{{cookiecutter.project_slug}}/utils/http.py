@@ -54,7 +54,7 @@ class {{ cookiecutter.class_name_prefix }}HTTPClient(ABC):
                         total=3,
                         connect=3,
                         backoff_factor=1,
-                    )
+                    ),
                 ),
             )
         try:
@@ -79,15 +79,15 @@ class {{ cookiecutter.class_name_prefix }}HTTPClient(ABC):
                 extra={"exception": str(exc), "call_made_from": prefix},
             )
             raise self.EXCEPTION_CLASS(
-                f"An error occurred performing {http_method} request: {exc}"
-            )
+                f"An error occurred performing {http_method} request: {exc}",
+            ) from exc
         except Exception as exc:
             prefix = f"{self.LOG_PREFIX}.exception"
             logger.warning(
                 f"{self.__class__.__name__}.exception",
                 extra={"exception": str(exc), "call_made_from": prefix},
             )
-            raise self.EXCEPTION_CLASS(f"Something went wrong: {exc}")
+            raise self.EXCEPTION_CLASS(f"Something went wrong: {exc}") from exc
 
         if not response.ok:
             return self._process_http_error_response(response)

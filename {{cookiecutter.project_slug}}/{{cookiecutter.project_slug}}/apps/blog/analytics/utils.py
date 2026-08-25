@@ -18,12 +18,12 @@ def get_model_publication_analytics(model) -> dict[str, Any]:
 	"""
 	if not hasattr(model, "publication_status"):
 		raise ValueError(
-			f"Model {model.__name__} does not have a 'publication_status' field."
+			f"Model {model.__name__} does not have a 'publication_status' field.",
 		)
 
 	# Query to fetch counts for each publication status
 	status_counts = model.objects.values("publication_status").annotate(
-		count=Count("id")
+		count=Count("id"),
 	)
 
 	# Map the counts to a dictionary

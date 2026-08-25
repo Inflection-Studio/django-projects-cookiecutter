@@ -39,7 +39,7 @@ class UserAdmin(DjangoUserAdmin):
                     "username",
                     {%- endif %}
                     "password",
-                )
+                ),
             },
         ),
         (_("Personal info"), {"fields": ("first_name", "last_name", "email")}),

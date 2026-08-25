@@ -1,3 +1,5 @@
+from datetime import timedelta
+
 from django.db import models
 from django.utils.timezone import now
 
@@ -30,7 +32,7 @@ class PublishableQuerySet(models.QuerySet):
                 QuerySet: A queryset of draft objects.
         """
         return self.filter(
-            publication_status=common_db_constants.PublicationStatusChoices.DRAFT
+            publication_status=common_db_constants.PublicationStatusChoices.DRAFT,
         )
 
     def unpublished(self):
@@ -41,7 +43,7 @@ class PublishableQuerySet(models.QuerySet):
                 QuerySet: A queryset of unpublished objects.
         """
         return self.filter(
-            publication_status=common_db_constants.PublicationStatusChoices.UNPUBLISHED
+            publication_status=common_db_constants.PublicationStatusChoices.UNPUBLISHED,
         )
 
     def archived(self):
@@ -66,8 +68,6 @@ class PublishableQuerySet(models.QuerySet):
         Returns:
                 QuerySet: A queryset of recently published objects.
         """
-        from datetime import timedelta
-
         recent_date = now() - timedelta(days=days)
         return self.filter(
             publication_status=common_db_constants.PublicationStatusChoices.PUBLISHED,

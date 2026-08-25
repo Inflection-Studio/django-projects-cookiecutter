@@ -1,6 +1,8 @@
 from django.urls import path
 
-from {{ cookiecutter.project_slug }}.apps.dashboard.views.blog import articles as article_views
+from {{ cookiecutter.project_slug }}.apps.dashboard.views.blog import (
+    articles as article_views,
+)
 
 app_name = "articles"
 

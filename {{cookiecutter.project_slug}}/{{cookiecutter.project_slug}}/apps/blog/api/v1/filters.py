@@ -1,7 +1,7 @@
 import django_filters
-from django.utils import timezone
 
 from {{ cookiecutter.project_slug }}.apps.blog import models
+
 
 class ArticleFilter(django_filters.FilterSet):
     category = django_filters.CharFilter(field_name="category__slug")

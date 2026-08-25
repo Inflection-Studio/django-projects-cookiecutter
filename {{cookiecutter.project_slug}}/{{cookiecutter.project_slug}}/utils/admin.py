@@ -125,17 +125,17 @@ class UploadedByAdminMixin(admin.ModelAdmin):
 
 class ReadOnlyModelAdmin(admin.ModelAdmin):
     def changeform_view(
-        self, request, object_id=None, form_url='', extra_context=None
+        self, request, object_id=None, form_url='', extra_context=None,
     ):
         extra_context = extra_context or {}
         if request.method == 'POST' and not extra_context.pop(
-            'override_post_permission', False
+            'override_post_permission', False,
         ):
             raise PermissionDenied
         extra_context.setdefault('show_save_and_continue', False)
         extra_context.setdefault('show_save', False)
         return super().changeform_view(
-            request, object_id, form_url, extra_context
+            request, object_id, form_url, extra_context,
         )
 
     def get_actions(self, request):
@@ -145,6 +145,7 @@ class ReadOnlyModelAdmin(admin.ModelAdmin):
         return actions
 
     def get_readonly_fields(self, request, obj=None):
+        del request
         return (
             list(self.readonly_fields)
             + [field.name for field in obj._meta.fields]
@@ -152,10 +153,13 @@ class ReadOnlyModelAdmin(admin.ModelAdmin):
         )  # yapf: disable
 
     def has_add_permission(self, request, obj=None):
+        del request, obj
         return False
 
     def has_delete_permission(self, request, obj=None):
+        del request, obj
         return False
 
     def has_change_permission(self, request, obj=None):
+        del request, obj
         return False

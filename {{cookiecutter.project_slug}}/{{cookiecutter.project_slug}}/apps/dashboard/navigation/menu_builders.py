@@ -1,9 +1,15 @@
 from dataclasses import dataclass, field
-from typing import Optional
 
 from django.urls import reverse_lazy
 from django.utils.translation import gettext_lazy as _
-from .constants import *
+
+from .constants import (
+    ICON_BLOG,
+    ICON_SETTINGS,
+    LABEL_BLOG,
+    LABEL_SYSTEM_ADMIN,
+    PERM_VIEW_USER,
+)
 
 
 @dataclass
@@ -23,7 +29,7 @@ class SidebarItem:
             return True
         return user.has_perms(self.permissions)
 
-    def to_dict(self, user) -> Optional[dict]:
+    def to_dict(self, user) -> dict | None:
         """
         Convert the sidebar item to a dictionary if visible to the user.
         """
@@ -41,6 +47,7 @@ class SidebarItem:
             ],
         }
 
+
 def build_blog_menu(request) -> SidebarItem:
     """
     Build the blog section of the sidebar menu.
@@ -52,33 +59,34 @@ def build_blog_menu(request) -> SidebarItem:
         sub_menu=[
             SidebarItem(
                 label=_("Categories"),
-                url=reverse_lazy("dashboard:articles:category_list")
+                url=reverse_lazy("dashboard:articles:category_list"),
             ),
             SidebarItem(
                 label=_("Articles"),
-                url=reverse_lazy("dashboard:articles:article_list")
+                url=reverse_lazy("dashboard:articles:article_list"),
             ),
             SidebarItem(
                 label=_("Add Article"),
-                url=reverse_lazy("dashboard:articles:article_list")
+                url=reverse_lazy("dashboard:articles:article_list"),
             ),
-            
-        ]
+        ],
     )
 
 
 def build_system_admin_menu(request) -> SidebarItem:
     return SidebarItem(
-            label=LABEL_SYSTEM_ADMIN,
-            icon=ICON_SETTINGS,
-            active="users" in request.path,
-            permissions=[PERM_VIEW_USER,],
-            sub_menu=[
-                SidebarItem(
-                    label=_("All Staff"), url=reverse_lazy("dashboard:login:staff_list")
-                ),
-                SidebarItem(
-                    label=_("Add Staff"), url=reverse_lazy("dashboard:login:staff_create")
-                ),
-            ],
-        )
+        label=LABEL_SYSTEM_ADMIN,
+        icon=ICON_SETTINGS,
+        active="users" in request.path,
+        permissions=[PERM_VIEW_USER],
+        sub_menu=[
+            SidebarItem(
+                label=_("All Staff"),
+                url=reverse_lazy("dashboard:login:staff_list"),
+            ),
+            SidebarItem(
+                label=_("Add Staff"),
+                url=reverse_lazy("dashboard:login:staff_create"),
+            ),
+        ],
+    )

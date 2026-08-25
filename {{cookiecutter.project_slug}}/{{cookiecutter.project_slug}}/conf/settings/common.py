@@ -19,7 +19,7 @@ from django.conf import global_settings
 from django.contrib.messages import constants as messages
 from django.core.exceptions import ImproperlyConfigured
 
-from ...constants.deployment import (
+from {{ cookiecutter.project_slug }}.constants.deployment import (
     ENVIRONMENT_PRODUCTION,
     ENVIRONMENT_STAGING,
     KNOWN_ENVIRONMENTS,
@@ -158,7 +158,7 @@ TEMPLATES = [
                 "django.template.context_processors.request",
                 "django.contrib.auth.context_processors.auth",
                 "django.contrib.messages.context_processors.messages",
-                "dashboard.context_processors.sidebar_context"
+                "dashboard.context_processors.sidebar_context",
             ],
         },
     },
@@ -297,7 +297,7 @@ SUPPORT_REPLY_TO_EMAIL_NAME = env("SUPPORT_REPLY_TO_EMAIL_NAME", default="suppor
 
 DEFAULT_FROM_EMAIL = SUPPORT_FROM_EMAIL_NAME + DEFAULT_EMAIL_DOMAIN
 CONTACT_EMAIL_RECIPIENTS = env.list(
-    "CONTACT_EMAIL_RECIPIENTS", default=[SUPPORT_REPLY_TO_EMAIL_NAME]
+    "CONTACT_EMAIL_RECIPIENTS", default=[SUPPORT_REPLY_TO_EMAIL_NAME],
 )
 
 USE_SMTP = env.bool("USE_SMTP", default=False)

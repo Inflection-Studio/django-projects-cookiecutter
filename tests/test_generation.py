@@ -1,4 +1,6 @@
 import ast
+import subprocess
+import sys
 from pathlib import Path
 
 import pytest
@@ -39,6 +41,17 @@ def assert_yaml_parses(project_path: Path) -> None:
             yaml.safe_load(path.read_text())
 
 
+def assert_ruff_clean(project_path: Path) -> None:
+    result = subprocess.run(
+        [sys.executable, "-m", "ruff", "check", "."],
+        cwd=project_path,
+        check=False,
+        capture_output=True,
+        text=True,
+    )
+    assert result.returncode == 0, result.stdout + result.stderr
+
+
 def assert_optional_files(project_path: Path, context: dict[str, str]) -> None:
     package = project_path / project_path.name
     has_blog = context.get("has_blog", "n") == "y"
@@ -77,6 +90,7 @@ def test_supported_combinations_render(cookies, extra_context):
     assert_python_parses(project_path)
     assert_yaml_parses(project_path)
     assert_optional_files(project_path, extra_context)
+    assert_ruff_clean(project_path)
 
 
 def test_username_auth_uses_django_user_manager(cookies):

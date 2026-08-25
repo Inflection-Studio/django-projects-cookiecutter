@@ -2,7 +2,14 @@
 from django.urls import reverse_lazy
 from django.utils.translation import gettext_lazy as _
 
-from .menu_builders import build_system_admin_menu, SidebarItem, build_blog_menu
+from .menu_builders import (
+    SidebarItem,
+    {%- if cookiecutter.has_blog == "y" %}
+    build_blog_menu,
+    {%- endif %}
+    build_system_admin_menu,
+)
+
 
 def get_sidebar_items(request) -> list[SidebarItem]:
     """

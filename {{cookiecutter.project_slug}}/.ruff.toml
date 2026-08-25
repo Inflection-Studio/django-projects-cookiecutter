@@ -24,6 +24,7 @@ select = [
 ignore = ["E203", "E501", "DJ001", "W191"]
 
 [lint.isort]
+forced-separate = ["mixins"]
 known-first-party = ["{{ cookiecutter.project_slug }}"]
 known-third-party = [
     "django",
