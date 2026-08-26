@@ -96,6 +96,9 @@ DJANGO_APPS = [
 THIRD_PARTY_APPS = [
     "allauth",
     "allauth.account",
+{% if cookiecutter.mail_service != "Other SMTP" %}
+    "anymail",
+{% endif %}
     "bootstrap4",
     "bootstrap_datepicker_plus",
     "django_extensions",
@@ -290,35 +293,133 @@ MARTOR_THEME = "bootstrap"
 {%- endif %}
 
 # Email settings
-DEFAULT_EMAIL_DOMAIN = env("DEFAULT_EMAIL_DOMAIN", default="@{{ cookiecutter.project_slug }}.com")
-SUPPORT_FROM_NAME = env("SUPPORT_FROM_NAME", default="{{ cookiecutter.project_name }} Support")
-SUPPORT_FROM_EMAIL_NAME = env("SUPPORT_FROM_EMAIL_NAME", default="support")
-SUPPORT_REPLY_TO_EMAIL_NAME = env("SUPPORT_REPLY_TO_EMAIL_NAME", default="support")
-
-DEFAULT_FROM_EMAIL = SUPPORT_FROM_EMAIL_NAME + DEFAULT_EMAIL_DOMAIN
-CONTACT_EMAIL_RECIPIENTS = env.list(
-    "CONTACT_EMAIL_RECIPIENTS", default=[SUPPORT_REPLY_TO_EMAIL_NAME],
+SUPPORT_FROM_NAME = env.str(
+    "SUPPORT_FROM_NAME",
+    default="{{ cookiecutter.project_name }} Support",
 )
+SUPPORT_FROM_EMAIL = env.str(
+    "SUPPORT_FROM_EMAIL",
+    default="support@{{ cookiecutter.domain_name }}",
+)
+DEFAULT_FROM_EMAIL = env.str(
+    "DEFAULT_FROM_EMAIL",
+    default=f"{SUPPORT_FROM_NAME} <{SUPPORT_FROM_EMAIL}>",
+)
+SERVER_EMAIL = env.str("SERVER_EMAIL", default=SUPPORT_FROM_EMAIL)
+CONTACT_EMAIL_RECIPIENTS = env.list(
+    "CONTACT_EMAIL_RECIPIENTS",
+    default=[SUPPORT_FROM_EMAIL],
+)
+EMAIL_SERVICE = "{{ cookiecutter.mail_service }}"
 
-USE_SMTP = env.bool("USE_SMTP", default=False)
-
+{% if cookiecutter.mail_service == "Mailgun" %}
 MAILERS = {
     "default": {
-        "BACKEND": "django.core.mail.backends.console.EmailBackend",
+        "BACKEND": "anymail.backends.mailgun.EmailBackend",
     },
 }
-
-if USE_SMTP:
-    MAILERS["default"] = {
+ANYMAIL = {
+    "MAILGUN_API_KEY": env.str("MAILGUN_API_KEY", default=""),
+    "MAILGUN_SENDER_DOMAIN": env.str(
+        "MAILGUN_SENDER_DOMAIN",
+        default="{{ cookiecutter.domain_name }}",
+    ),
+    "REQUESTS_TIMEOUT": env.int("ANYMAIL_REQUESTS_TIMEOUT", default=30),
+}
+{% elif cookiecutter.mail_service == "Amazon SES" %}
+MAILERS = {
+    "default": {
+        "BACKEND": "anymail.backends.amazon_ses.EmailBackend",
+    },
+}
+ANYMAIL = {
+    "AMAZON_SES_CLIENT_PARAMS": {
+        "region_name": env.str("AWS_DEFAULT_REGION", default="us-east-1"),
+    },
+}
+{% elif cookiecutter.mail_service == "Mailjet" %}
+MAILERS = {
+    "default": {
+        "BACKEND": "anymail.backends.mailjet.EmailBackend",
+    },
+}
+ANYMAIL = {
+    "MAILJET_API_KEY": env.str("MAILJET_API_KEY", default=""),
+    "MAILJET_SECRET_KEY": env.str("MAILJET_SECRET_KEY", default=""),
+    "REQUESTS_TIMEOUT": env.int("ANYMAIL_REQUESTS_TIMEOUT", default=30),
+}
+{% elif cookiecutter.mail_service == "Mandrill" %}
+MAILERS = {
+    "default": {
+        "BACKEND": "anymail.backends.mandrill.EmailBackend",
+    },
+}
+ANYMAIL = {
+    "MANDRILL_API_KEY": env.str("MANDRILL_API_KEY", default=""),
+    "REQUESTS_TIMEOUT": env.int("ANYMAIL_REQUESTS_TIMEOUT", default=30),
+}
+{% elif cookiecutter.mail_service == "Postmark" %}
+MAILERS = {
+    "default": {
+        "BACKEND": "anymail.backends.postmark.EmailBackend",
+    },
+}
+ANYMAIL = {
+    "POSTMARK_SERVER_TOKEN": env.str("POSTMARK_SERVER_TOKEN", default=""),
+    "REQUESTS_TIMEOUT": env.int("ANYMAIL_REQUESTS_TIMEOUT", default=30),
+}
+{% elif cookiecutter.mail_service == "SendGrid" %}
+MAILERS = {
+    "default": {
+        "BACKEND": "anymail.backends.sendgrid.EmailBackend",
+    },
+}
+ANYMAIL = {
+    "SENDGRID_API_KEY": env.str("SENDGRID_API_KEY", default=""),
+    "REQUESTS_TIMEOUT": env.int("ANYMAIL_REQUESTS_TIMEOUT", default=30),
+}
+{% elif cookiecutter.mail_service == "Brevo" %}
+MAILERS = {
+    "default": {
+        "BACKEND": "anymail.backends.brevo.EmailBackend",
+    },
+}
+ANYMAIL = {
+    "BREVO_API_KEY": env.str("BREVO_API_KEY", default=""),
+    "REQUESTS_TIMEOUT": env.int("ANYMAIL_REQUESTS_TIMEOUT", default=30),
+}
+{% elif cookiecutter.mail_service == "SparkPost" %}
+MAILERS = {
+    "default": {
+        "BACKEND": "anymail.backends.sparkpost.EmailBackend",
+    },
+}
+ANYMAIL = {
+    "SPARKPOST_API_KEY": env.str("SPARKPOST_API_KEY", default=""),
+    "REQUESTS_TIMEOUT": env.int("ANYMAIL_REQUESTS_TIMEOUT", default=30),
+}
+{% else %}
+smtp_use_tls = env.bool("EMAIL_USE_TLS", default=True)
+smtp_use_ssl = env.bool("EMAIL_USE_SSL", default=False)
+if smtp_use_tls and smtp_use_ssl:
+    raise ImproperlyConfigured(
+        "EMAIL_USE_TLS and EMAIL_USE_SSL are mutually exclusive.",
+    )
+MAILERS = {
+    "default": {
         "BACKEND": "django.core.mail.backends.smtp.EmailBackend",
         "OPTIONS": {
-            "host": env.str("EMAIL_HOST", default="smtp.sendgrid.net"),
-            "username": env.str("EMAIL_HOST_USER", default="apikey"),
-            "password": env.str("EMAIL_HOST_PASSWORD", default=""),
+            "host": env.str("EMAIL_HOST", default="localhost"),
             "port": env.int("EMAIL_PORT", default=587),
-            "use_tls": env.bool("EMAIL_USE_TLS", default=True),
+            "username": env.str("EMAIL_HOST_USER", default=""),
+            "password": env.str("EMAIL_HOST_PASSWORD", default=""),
+            "use_tls": smtp_use_tls,
+            "use_ssl": smtp_use_ssl,
+            "timeout": env.int("EMAIL_TIMEOUT", default=30),
         },
-    }
+    },
+}
+{% endif %}
 
 BOOTSTRAP4 = {
     "include_jquery": True,

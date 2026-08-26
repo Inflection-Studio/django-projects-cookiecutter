@@ -1,6 +1,7 @@
 import ast
 import subprocess
 import sys
+import tomllib
 from pathlib import Path
 
 import pytest
@@ -41,6 +42,11 @@ def assert_yaml_parses(project_path: Path) -> None:
             yaml.safe_load(path.read_text())
 
 
+def assert_toml_parses(project_path: Path) -> None:
+    for path in project_path.rglob("*.toml"):
+        tomllib.loads(path.read_text())
+
+
 def assert_ruff_clean(project_path: Path) -> None:
     result = subprocess.run(
         [sys.executable, "-m", "ruff", "check", "."],
@@ -59,7 +65,16 @@ def assert_optional_files(project_path: Path, context: dict[str, str]) -> None:
     use_drf = context.get("use_drf", "n") == "y"
 
     assert (project_path / "Dockerfile").exists() is use_docker
+    if use_docker:
+        dockerfile = (project_path / "Dockerfile").read_text()
+        assert "FROM python:3.14-slim AS base" in dockerfile
+    assert (project_path / "uv.lock").is_file()
+    assert not (project_path / "poetry.lock").exists()
+    assert ".venv/" in (project_path / ".gitignore").read_text()
     assert (package / "apps" / "blog").exists() is has_blog
+    assert (
+        package / "apps" / "blog" / "migrations" / "0001_initial.py"
+    ).exists() is has_blog
     assert (package / "common" / "pagination.py").exists() is use_drf
     assert (package / "common" / "versioning.py").exists() is use_drf
     assert (package / "apps" / "blog" / "api").exists() is (has_blog and use_drf)
@@ -74,7 +89,7 @@ def assert_dependabot_config(project_path: Path, context: dict[str, str]) -> Non
     use_docker = context.get("use_docker", "n") == "y"
 
     assert ecosystems.count("github-actions") == 1
-    assert ecosystems.count("pip") == 1
+    assert ecosystems.count("uv") == 1
     assert ecosystems.count("docker") == (2 if use_docker else 0)
     assert ecosystems.count("docker-compose") == (1 if use_docker else 0)
 
@@ -92,6 +107,18 @@ def assert_dependabot_config(project_path: Path, context: dict[str, str]) -> Non
         project_path / ".github" / "workflows" / "codeql.yml"
     ).read_text()
     assert "${{ matrix.language }}" in codeql_workflow
+
+
+def assert_uv_project(project_path: Path) -> None:
+    config = tomllib.loads((project_path / "pyproject.toml").read_text())
+
+    assert config["tool"]["uv"]["package"] is False
+    assert config["project"]["requires-python"] == ">=3.14,<4.0"
+    assert "dev" in config["dependency-groups"]
+    assert "test" in config["dependency-groups"]
+
+    for relative_path in ("AGENTS.md", "Makefile", "README.md", "pyproject.toml"):
+        assert "poetry" not in (project_path / relative_path).read_text().lower()
 
 
 @pytest.mark.parametrize(
@@ -117,8 +144,104 @@ def test_supported_combinations_render(cookies, extra_context):
     assert_no_cookiecutter_markers(project_path)
     assert_python_parses(project_path)
     assert_yaml_parses(project_path)
+    assert_toml_parses(project_path)
     assert_optional_files(project_path, extra_context)
     assert_dependabot_config(project_path, extra_context)
+    assert_uv_project(project_path)
+    assert_ruff_clean(project_path)
+
+
+@pytest.mark.parametrize(
+    ("mail_service", "backend", "setting_name", "env_name"),
+    [
+        (
+            "Mailgun",
+            "anymail.backends.mailgun.EmailBackend",
+            "MAILGUN_API_KEY",
+            "MAILGUN_API_KEY",
+        ),
+        (
+            "Amazon SES",
+            "anymail.backends.amazon_ses.EmailBackend",
+            "AMAZON_SES_CLIENT_PARAMS",
+            "AWS_ACCESS_KEY_ID",
+        ),
+        (
+            "Mailjet",
+            "anymail.backends.mailjet.EmailBackend",
+            "MAILJET_API_KEY",
+            "MAILJET_API_KEY",
+        ),
+        (
+            "Mandrill",
+            "anymail.backends.mandrill.EmailBackend",
+            "MANDRILL_API_KEY",
+            "MANDRILL_API_KEY",
+        ),
+        (
+            "Postmark",
+            "anymail.backends.postmark.EmailBackend",
+            "POSTMARK_SERVER_TOKEN",
+            "POSTMARK_SERVER_TOKEN",
+        ),
+        (
+            "SendGrid",
+            "anymail.backends.sendgrid.EmailBackend",
+            "SENDGRID_API_KEY",
+            "SENDGRID_API_KEY",
+        ),
+        (
+            "Brevo",
+            "anymail.backends.brevo.EmailBackend",
+            "BREVO_API_KEY",
+            "BREVO_API_KEY",
+        ),
+        (
+            "SparkPost",
+            "anymail.backends.sparkpost.EmailBackend",
+            "SPARKPOST_API_KEY",
+            "SPARKPOST_API_KEY",
+        ),
+    ],
+)
+def test_anymail_provider_configuration(
+    cookies, mail_service, backend, setting_name, env_name
+):
+    project_path = assert_successful_bake(
+        cookies.bake(extra_context={"mail_service": mail_service})
+    )
+    package = project_path / project_path.name
+    settings = (package / "conf" / "settings" / "common.py").read_text()
+    environment = (project_path / ".env.example").read_text()
+    pyproject = (project_path / "pyproject.toml").read_text()
+
+    assert f'"BACKEND": "{backend}"' in settings
+    assert "EMAIL_BACKEND =" not in settings
+    assert f'"{setting_name}"' in settings
+    assert f"{env_name}=" in environment
+    assert '"anymail",' in settings
+    assert "django-anymail" in pyproject
+    if mail_service == "Amazon SES":
+        assert "django-anymail[amazon-ses]" in pyproject
+    assert_python_parses(project_path)
+    assert_ruff_clean(project_path)
+
+
+def test_other_smtp_uses_django_backend(cookies):
+    project_path = assert_successful_bake(
+        cookies.bake(extra_context={"mail_service": "Other SMTP"})
+    )
+    package = project_path / project_path.name
+    settings = (package / "conf" / "settings" / "common.py").read_text()
+    environment = (project_path / ".env.example").read_text()
+    pyproject = (project_path / "pyproject.toml").read_text()
+
+    assert '"BACKEND": "django.core.mail.backends.smtp.EmailBackend"' in settings
+    assert "EMAIL_BACKEND =" not in settings
+    assert "EMAIL_HOST=" in environment
+    assert '"anymail",' not in settings
+    assert "django-anymail" not in pyproject
+    assert_python_parses(project_path)
     assert_ruff_clean(project_path)
 
 
@@ -149,7 +272,7 @@ def test_email_auth_uses_custom_user_manager(cookies):
     assert 'ACCOUNT_LOGIN_METHODS = {"email"}' in settings
 
 
-def test_docker_project_has_lock_file(cookies):
+def test_docker_project_has_uv_lock_file(cookies):
     result = cookies.bake(
         extra_context={"project_name": "Docker Project", "use_docker": "y"}
     )
@@ -157,7 +280,7 @@ def test_docker_project_has_lock_file(cookies):
 
     assert (project_path / "Dockerfile").is_file()
     assert (project_path / "docker-compose.yml").is_file()
-    assert (project_path / "poetry.lock").is_file()
+    assert (project_path / "uv.lock").is_file()
 
 
 def test_invalid_project_slug_is_rejected(cookies):

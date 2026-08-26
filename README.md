@@ -7,27 +7,34 @@ under `{{cookiecutter.project_slug}}/` and is rendered using the choices in
 
 ## Requirements
 
-- Python 3.13
-- Poetry 2.x
+- Python 3.14
+- uv 0.12.6 or newer
 
 ## Maintainer setup
 
 ```bash
-poetry install
+uv sync --locked
+```
+
+Install the repository's Git pre-commit hook:
+
+```bash
+uv run --locked pre-commit install
 ```
 
 Generate a project with the default options:
 
 ```bash
-poetry run cookiecutter . --no-input
+uv run --locked cookiecutter . --no-input
 ```
 
 Run the template test suite and lint the maintainer code:
 
 ```bash
-poetry run pytest
-poetry run ruff check hooks tests
-poetry run ruff format --check hooks tests
+uv run --locked pytest
+uv run --locked ruff check hooks tests
+uv run --locked ruff format --check hooks tests
+uv run --locked pre-commit run --all-files
 ```
 
 ## Repository layout
@@ -52,3 +59,8 @@ When adding or changing a choice:
 
 The generated project has its own README and `AGENTS.md`. Keep maintainer
 instructions here and end-user instructions in the generated project.
+
+## Contributing
+
+See [CONTRIBUTING.md](CONTRIBUTING.md) for development setup, template and
+generated-project testing, and pull request guidance.

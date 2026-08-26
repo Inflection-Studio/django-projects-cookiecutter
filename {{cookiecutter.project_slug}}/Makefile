@@ -18,8 +18,7 @@ help:
 	@echo "  migrations       	make Django migrations for edited models"
 	@echo "  migrate           	apply Django migrations in correct order"
 	@echo "  hooks             	to update or install pre-commit hooks"
-	@echo "  install-poetry    	install poetry dependency manager."
-	@echo "  uninstall-poetry  	uninstalls poetry if things go wrong."
+	@echo "  install-uv        	install the uv dependency manager."
 	@echo "  pip-freeze  		output the contents of the pyproject.toml into a requirements.txt file"
 	@echo "  show_urls			output all defined program urls on the command line"
 	@echo "  test              run the automated test suite"
@@ -42,65 +41,56 @@ MODEL_NAME := UserAccount
 FIXTURE_NAME := users
 SHELL_TYPE := ipython
 
-# poetry installation
-.PHONY: install-poetry
-install-poetry:
-	curl -sSL https://install.python-poetry.org | python3 -
+# uv installation and dependency management
+.PHONY: install-uv
+install-uv:
+	curl -LsSf https://astral.sh/uv/0.12.6/install.sh | sh
 
-.PHONY: uninstall-poetry
-uninstall-poetry:
-	curl -sSL https://install.python-poetry.org | python3 - --uninstall
-
-# poetry dependency management
 .PHONY: pip-freeze
 pip-freeze:
-	pip --disable-pip-version-check list --format=freeze > requirements.txt
-
-.PHONY: deps-clean
-deps-clean:
-	poetry env use 3.13
+	uv export --locked --no-dev --no-hashes --output-file requirements.txt
 
 .PHONY: deps
-deps: deps-clean
-	poetry install --no-cache
+deps:
+	uv sync --locked
 
 .PHONY: deps-prod
 deps-prod:
-	poetry install --no-interaction --no-ansi --no-root --only main
+	uv sync --locked --no-dev
 
 # Django commands
 .PHONY: runserver
-runserver: deps-clean
-	poetry run python manage.py runserver
+runserver:
+	uv run --locked python manage.py runserver
 
 .PHONY: migrations
-migrations: deps-clean
-	poetry run python manage.py makemigrations
+migrations:
+	uv run --locked python manage.py makemigrations
 
 .PHONY: migrate
-migrate: deps-clean
-	poetry run python manage.py migrate
+migrate:
+	uv run --locked python manage.py migrate
 
 .PHONY: superuser
-superuser: deps-clean
-	poetry run python manage.py createsuperuser
+superuser:
+	uv run --locked python manage.py createsuperuser
 
 # collect static files
 .PHONY: collectstatic
-collectstatic: deps-clean
-	poetry run python manage.py collectstatic --noinput
+collectstatic:
+	uv run --locked python manage.py collectstatic --noinput
 
 .PHONY: shell
-shell: deps-clean
-	poetry run python manage.py shell_plus --${SHELL_TYPE}
+shell:
+	uv run --locked python manage.py shell_plus --${SHELL_TYPE}
 
 .PHONY: show_urls
-show_urls: deps-clean
-	poetry run python manage.py show_urls
+show_urls:
+	uv run --locked python manage.py show_urls
 
 .PHONY: app
 app:
-	poetry run python manage.py startapp ${APP_NAME}
+	uv run --locked python manage.py startapp ${APP_NAME}
 	@echo "App ${APP_NAME} created successfully"
 	mv ./${APP_NAME} ${APP_DIRECTORY}
 	@echo "App Moved to the apps directory ${APP_DIRECTORY}"
@@ -140,22 +130,22 @@ container-health-check:
 # Pre-commit hooks
 .PHONY: hooks
 hooks:
-	poetry run pre-commit install
+	uv run --locked pre-commit install
 
 .PHONY: fmt-all
 fmt-all:
-	poetry run pre-commit run --all-files
+	uv run --locked pre-commit run --all-files
 
 # Tests
 .PHONY: test
 test:
-	poetry run pytest
+	uv run --locked pytest
 
 # Fixtures
 .PHONY: dump-fixtures
 dump-fixtures:
-	poetry run python manage.py dumpdata ${APP_LABEL}.${FIXTURE_NAME} --indent 2 > fixtures/${FIXTURE_NAME}.json
+	uv run --locked python manage.py dumpdata ${APP_LABEL}.${FIXTURE_NAME} --indent 2 > fixtures/${FIXTURE_NAME}.json
 
 .PHONY: load-fixtures
 load-fixtures:
-	poetry run python manage.py loaddata fixtures/${FIXTURE_NAME}.json --app ${APP_LABEL}.${FIXTURE_NAME}.json
+	uv run --locked python manage.py loaddata fixtures/${FIXTURE_NAME}.json --app ${APP_LABEL}.${FIXTURE_NAME}.json

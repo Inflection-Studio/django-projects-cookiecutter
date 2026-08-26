@@ -18,7 +18,7 @@ class SidebarItem:
     url: str = "#"
     active: bool = False
     icon: str | None = None
-    sub_menu: list["SidebarItem"] = field(default_factory=list)
+    sub_menu: list[SidebarItem] = field(default_factory=list)
     permissions: list[str] = field(default_factory=list)
 
     def is_visible(self, user) -> bool:

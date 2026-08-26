@@ -10,8 +10,8 @@ updates:
         patterns:
           - "*"
 
-  # Poetry projects use Dependabot's pip ecosystem.
-  - package-ecosystem: "pip"
+  # Keep the uv project manifest and lockfile current.
+  - package-ecosystem: "uv"
     directory: "/"
     schedule:
       interval: "daily"
@@ -30,7 +30,7 @@ updates:
     schedule:
       interval: "daily"
     ignore:
-      - dependency-name: "*"
+      - dependency-name: "python"
         update-types:
           - "version-update:semver-major"
           - "version-update:semver-minor"

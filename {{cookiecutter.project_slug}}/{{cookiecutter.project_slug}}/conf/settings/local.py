@@ -15,10 +15,9 @@ DATABASES = {
     }
 }
 
-# Keep local mail in memory unless SMTP was explicitly enabled in common settings.
-if not USE_SMTP:
-    MAILERS = {
-        "default": {
-            "BACKEND": "django.core.mail.backends.locmem.EmailBackend",
-        },
-    }
+# Keep local email deterministic and prevent accidental external delivery.
+MAILERS = {
+    "default": {
+        "BACKEND": "django.core.mail.backends.locmem.EmailBackend",
+    },
+}

@@ -2,7 +2,7 @@
 
 ## Project overview
 
-This is a Django project using Python 3.13 and Poetry. Django applications live
+This is a Django project using Python 3.14 and uv. Django applications live
 under `{{ cookiecutter.project_slug }}/apps/`, shared framework code lives under
 `{{ cookiecutter.project_slug }}/common/`, and environment-specific settings live
 under `{{ cookiecutter.project_slug }}/conf/settings/`.
@@ -21,7 +21,7 @@ make fmt-all
 Run a focused test with:
 
 ```bash
-poetry run pytest path/to/test_file.py -k test_name
+uv run --locked pytest path/to/test_file.py -k test_name
 ```
 {% if cookiecutter.use_docker == "y" %}
 Docker workflows:

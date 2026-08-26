@@ -17,8 +17,6 @@ class EmailService:
         if not self.request.is_secure():
             protocol = "http"
 
-        # TODO: move this to function
-        # send_email(recipient=user.email, from_email=settings.DEFAULT_FROM_EMAIL, subject=subject,template_name='account/emails/welcome.html')
         message = render_to_string(
             "account/emails/welcome.html",
             {
@@ -48,11 +46,10 @@ class EmailService:
 
         for recipient in settings.CONTACT_EMAIL_RECIPIENTS:
             self.send_email(
-                self.request,
                 recipient=recipient,
                 subject=subject,
                 contact_message=contact_message,
-                from_email=contact_message.get("email"),
+                reply_to_email=contact_message.get("email"),
                 template_name=template_name,
             )
 
@@ -61,7 +58,7 @@ class EmailService:
         recipient: str,
         subject: str,
         contact_message: str,
-        from_email: str,
+        reply_to_email: str,
         template_name: str,
     ):
         current_site = get_current_site(self.request)
@@ -81,10 +78,11 @@ class EmailService:
         email = EmailMultiAlternatives(
             subject,
             message,
-            from_email=from_email,
+            from_email=settings.DEFAULT_FROM_EMAIL,
             to=[
                 recipient,
             ],
+            reply_to=[reply_to_email],
         )
         email.content_subtype = "html"
         email.send()
