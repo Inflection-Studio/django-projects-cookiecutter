@@ -25,7 +25,7 @@ help:
 
 
 {% if cookiecutter.use_docker == "y" %}
-CONTAINERS := {{cookiecutter.project_slug}}_db {{cookiecutter.project_slug}}_redis {{cookiecutter.project_slug}}_web_server {{cookiecutter.project_slug}}_pg_admin
+CONTAINERS := {{cookiecutter.project_slug}}_django {{cookiecutter.project_slug}}_db {{cookiecutter.project_slug}}_redis {{cookiecutter.project_slug}}_web_server {{cookiecutter.project_slug}}_pg_admin
 # ANSI escape codes for colors
 GREEN := \033[0;32m
 LIGHT_PURPLE := \033[1;35m
