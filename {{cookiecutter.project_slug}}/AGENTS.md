@@ -31,6 +31,10 @@ make docker-dev
 make docker-staging
 make docker-down
 ```
+
+The Docker stack includes the web application, PostgreSQL, Redis, nginx, and
+pgAdmin services. Redis is built from `deploy/redis/Dockerfile` and is used by
+Celery as the broker/result backend.
 {% endif %}
 
 ## Architecture

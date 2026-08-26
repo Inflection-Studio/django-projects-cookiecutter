@@ -28,6 +28,7 @@ updates:
       - "/{{cookiecutter.project_slug}}"
       - "/{{cookiecutter.project_slug}}/deploy/nginx"
       - "/{{cookiecutter.project_slug}}/deploy/postgres"
+      - "/{{cookiecutter.project_slug}}/deploy/redis"
     schedule:
       interval: "weekly"
     groups:

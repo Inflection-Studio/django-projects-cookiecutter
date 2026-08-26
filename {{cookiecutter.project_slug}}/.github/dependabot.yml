@@ -44,6 +44,7 @@ updates:
     directories:
       - "/deploy/nginx"
       - "/deploy/postgres"
+      - "/deploy/redis"
     schedule:
       interval: "daily"
     groups:
