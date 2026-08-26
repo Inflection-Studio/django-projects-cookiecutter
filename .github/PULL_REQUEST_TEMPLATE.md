@@ -26,4 +26,4 @@ _Add how you plan to monitor the changes introduced_
 
 ## Related Documentation
 
-_You may add any relevant information  related to the changes, e.g slack conversations, blog posts etc_
+_You may add any relevant information related to the changes, e.g slack conversations, blog posts etc_

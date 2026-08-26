@@ -14,22 +14,18 @@ jobs:
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v7
-      - uses: actions/setup-python@v7
+      - uses: astral-sh/setup-uv@v7
         with:
-          python-version: "3.13"
-      - uses: snok/install-poetry@v1
-        with:
-          version: "2.4.1"
-          virtualenvs-create: true
-          virtualenvs-in-project: true
+          version: "0.12.6"
+          python-version: "3.14"
+          enable-cache: true
+          cache-dependency-glob: "uv.lock"
       - name: Install dependencies
-        run: poetry install --no-interaction
-      - name: Lint maintainer code
-        run: |
-          poetry run ruff check hooks tests
-          poetry run ruff format --check hooks tests
+        run: uv sync --locked
+      - name: Run maintainer pre-commit checks
+        run: uv run --locked pre-commit run --all-files --show-diff-on-failure
       - name: Test template generation
-        run: poetry run pytest
+        run: uv run --locked pytest
 
   generated-project-smoke:
     needs: test
@@ -40,33 +36,31 @@ jobs:
       SMOKE_IMAGE: cookiecutter-django-smoke:ci
     steps:
       - uses: actions/checkout@v7
-      - uses: actions/setup-python@v7
+      - uses: astral-sh/setup-uv@v7
         with:
-          python-version: "3.13"
-      - uses: snok/install-poetry@v1
-        with:
-          version: "2.4.1"
-          virtualenvs-create: true
-          virtualenvs-in-project: true
+          version: "0.12.6"
+          python-version: "3.14"
+          enable-cache: true
+          cache-dependency-glob: "uv.lock"
       - name: Install template dependencies
-        run: poetry install --no-interaction
+        run: uv sync --locked
       - name: Generate Docker project
         run: |
           mkdir -p "${{ runner.temp }}/cookiecutter-smoke"
-          poetry run cookiecutter . \
+          uv run --locked cookiecutter . \
             --no-input \
             --output-dir "${{ runner.temp }}/cookiecutter-smoke" \
             project_name="CI Smoke Project" \
             use_docker=y
       - name: Install generated project dependencies
         working-directory: ${{ runner.temp }}/cookiecutter-smoke/ci_smoke_project
-        run: poetry install --no-interaction --no-root
+        run: uv sync --locked
       - name: Run generated Django smoke tests
         working-directory: ${{ runner.temp }}/cookiecutter-smoke/ci_smoke_project
         run: |
-          poetry run python manage.py check
-          poetry run python manage.py makemigrations --check --dry-run
-          poetry run pytest
+          uv run --locked python manage.py check
+          uv run --locked python manage.py makemigrations --check --dry-run
+          uv run --locked pytest
       - name: Validate generated Compose configuration
         working-directory: ${{ runner.temp }}/cookiecutter-smoke/ci_smoke_project
         run: |
@@ -86,4 +80,4 @@ jobs:
           docker run --rm \
             --entrypoint python \
             "${SMOKE_IMAGE}" \
-            -c 'import shutil; import django; import gunicorn; import psycopg2; assert shutil.which("poetry") is None; assert shutil.which("gcc") is None'
+            -c 'import shutil; import anymail; import django; import gunicorn; import psycopg2; assert shutil.which("uv") is None; assert shutil.which("gcc") is None'

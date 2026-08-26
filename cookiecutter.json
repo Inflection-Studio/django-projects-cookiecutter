@@ -22,8 +22,8 @@
     "Mailjet",
     "Mandrill",
     "Postmark",
-    "Sendgrid",
-    "SendinBlue",
+    "SendGrid",
+    "Brevo",
     "SparkPost",
     "Other SMTP"
   ],

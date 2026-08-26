@@ -2,6 +2,7 @@ media/
 .env
 .env.live
 .python-version
+.venv/
 .ruff_cache
 
 # unit test / coverage reports

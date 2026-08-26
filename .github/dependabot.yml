@@ -2,8 +2,8 @@
 version: 2
 
 updates:
-  # Poetry dependencies used to maintain and test the template.
-  - package-ecosystem: "pip"
+  # uv dependencies used to maintain and test the template.
+  - package-ecosystem: "uv"
     directory: "/"
     schedule:
       interval: "weekly"

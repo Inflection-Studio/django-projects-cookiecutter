@@ -9,11 +9,11 @@ rendered using `cookiecutter.json`.
 ## Commands
 
 ```bash
-poetry install
-poetry run pytest
-poetry run ruff check hooks tests
-poetry run ruff format --check hooks tests
-poetry run cookiecutter . --no-input --output-dir=/tmp/cookiecutter-output
+uv sync --locked
+uv run --locked pytest
+uv run --locked ruff check hooks tests
+uv run --locked ruff format --check hooks tests
+uv run --locked cookiecutter . --no-input --output-dir=/tmp/cookiecutter-output
 ```
 
 Run generated-project Django commands from the rendered output, not from this

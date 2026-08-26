@@ -11,22 +11,22 @@ def remove(path: Path) -> None:
         path.unlink()
 
 
-def create_poetry_lock() -> None:
-    poetry = shutil.which("poetry")
-    if poetry is None:
+def create_uv_lock() -> None:
+    uv = shutil.which("uv")
+    if uv is None:
         print(
-            "ERROR: Poetry is required to generate the lock file used by Docker.",
+            "ERROR: uv is required to generate the project lock file.",
             file=sys.stderr,
         )
         raise SystemExit(1)
 
     try:
         subprocess.run(
-            [poetry, "lock", "--no-interaction"],
+            [uv, "lock", "--no-progress"],
             check=True,
         )
     except subprocess.CalledProcessError as exc:
-        print("ERROR: Poetry could not generate poetry.lock.", file=sys.stderr)
+        print("ERROR: uv could not generate uv.lock.", file=sys.stderr)
         raise SystemExit(exc.returncode) from exc
 
 
@@ -74,5 +74,5 @@ if "{{ cookiecutter.use_docker }}" != "y":
         "docker-compose.yml",
     ):
         remove(Path(docker_path))
-else:
-    create_poetry_lock()
+
+create_uv_lock()

@@ -2,13 +2,13 @@
 
 {{ cookiecutter.project_description }}
 
-This project uses Django 6.1, Python 3.13, and Poetry for dependency
+This project uses Django 6.1, Python 3.14, and uv for dependency
 management.
 
 ## Requirements
 
-- Python 3.13
-- Poetry 2.4 or newer
+- Python 3.14
+- uv 0.12.6 or newer
 - Git
 {% if cookiecutter.use_docker == "y" %}- Docker with Docker Compose
 {% endif %}
@@ -56,11 +56,18 @@ make fmt-all           # Run all pre-commit checks and fixes
 make hooks             # Install the Git pre-commit hook
 ```
 
-Run a focused test directly with Poetry:
+Run a focused test directly with uv:
 
 ```bash
-poetry run pytest {{ cookiecutter.project_slug }}/apps/login/tests/test_models.py
+uv run --locked pytest {{ cookiecutter.project_slug }}/apps/login/tests/test_models.py
 ```
+
+## Email delivery
+
+Production email uses {% if cookiecutter.mail_service == "Other SMTP" %}Django's SMTP backend{% else %}django-anymail with the {{ cookiecutter.mail_service }} API backend{% endif %}.
+Local development and tests use Django's in-memory backend so they never send
+external email. Configure the provider-specific variables shown in
+`.env.example` before deploying.
 {% if cookiecutter.use_docker == "y" %}
 
 ## Docker workflows
@@ -110,7 +117,7 @@ For deployment, set `ENVIRONMENT=prd`, use the live settings module, set
 credentials. Run Django's deployment checks before release:
 
 ```bash
-poetry run python manage.py check --deploy
+uv run --locked python manage.py check --deploy
 ```
 
 See `AGENTS.md` for architecture, testing, migration, and safety conventions.
