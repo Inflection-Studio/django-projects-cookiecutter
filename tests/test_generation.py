@@ -68,6 +68,14 @@ def assert_optional_files(project_path: Path, context: dict[str, str]) -> None:
     if use_docker:
         dockerfile = (project_path / "Dockerfile").read_text()
         assert "FROM python:3.14-slim AS base" in dockerfile
+        assert (project_path / "deploy" / "redis" / "Dockerfile").is_file()
+        compose = yaml.safe_load((project_path / "docker-compose.yml").read_text())
+        redis = compose["services"]["redis"]
+        assert redis["build"] == "./deploy/redis"
+        assert redis["networks"] == ["internal"]
+        assert redis["volumes"] == ["redisdata:/data"]
+        assert redis["healthcheck"]["test"] == ["CMD", "redis-cli", "ping"]
+        assert "redisdata" in compose["volumes"]
     assert (project_path / "uv.lock").is_file()
     assert not (project_path / "poetry.lock").exists()
     assert ".venv/" in (project_path / ".gitignore").read_text()
@@ -101,6 +109,7 @@ def assert_dependabot_config(project_path: Path, context: dict[str, str]) -> Non
         assert set(docker_updates[1]["directories"]) == {
             "/deploy/nginx",
             "/deploy/postgres",
+            "/deploy/redis",
         }
 
     codeql_workflow = (

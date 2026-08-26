@@ -25,7 +25,7 @@ help:
 
 
 {% if cookiecutter.use_docker == "y" %}
-CONTAINERS := {{cookiecutter.project_slug}}_db {{cookiecutter.project_slug}}_web_server {{cookiecutter.project_slug}}_pg_admin
+CONTAINERS := {{cookiecutter.project_slug}}_django {{cookiecutter.project_slug}}_db {{cookiecutter.project_slug}}_redis {{cookiecutter.project_slug}}_web_server {{cookiecutter.project_slug}}_pg_admin
 # ANSI escape codes for colors
 GREEN := \033[0;32m
 LIGHT_PURPLE := \033[1;35m
@@ -124,7 +124,7 @@ docker-logs:
 
 .PHONY: container-health-check
 container-health-check:
-	$(foreach container,$(CONTAINERS),echo "$(GREEN)Health Check for $(container):$(RESET)" && echo "$(LIGHT_PURPLE)" && docker inspect' $(container) && echo "$(RESET)" && echo)
+	$(foreach container,$(CONTAINERS),echo "$(GREEN)Health Check for $(container):$(RESET)" && echo "$(LIGHT_PURPLE)" && docker inspect --format '{{'{{'}}if .State.Health{{'}}'}}{{'{{'}}.State.Health.Status{{'}}'}}{{'{{'}}else{{'}}'}}{{'{{'}}.State.Status{{'}}'}}{{'{{'}}end{{'}}'}}' $(container) && echo "$(RESET)" && echo;)
 {% endif %}
 
 # Pre-commit hooks

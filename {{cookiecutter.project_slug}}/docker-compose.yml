@@ -42,6 +42,22 @@ services:
       timeout: 5s
       retries: 5
 
+  redis:
+    build: ./deploy/redis
+    container_name: {{cookiecutter.project_slug}}_redis
+    restart: unless-stopped
+    expose:
+      - "6379"
+    networks:
+      - internal
+    volumes:
+      - redisdata:/data
+    healthcheck:
+      test: ["CMD", "redis-cli", "ping"]
+      interval: 5s
+      timeout: 5s
+      retries: 5
+
   nginx:
     restart: always
     build: ./deploy/nginx
@@ -70,5 +86,6 @@ networks:
 
 volumes:
   pgdata18:
+  redisdata:
   media:
   static:
