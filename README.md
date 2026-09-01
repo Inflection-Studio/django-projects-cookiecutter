@@ -3,7 +3,18 @@
 This repository is a Cookiecutter template for generating opinionated Django
 projects. It is not itself a Django application. The generated project lives
 under `{{cookiecutter.project_slug}}/` and is rendered using the choices in
-`cookiecutter.json`.
+`cookiecutter.json`. It is maintained by
+[Inflection Studio](https://inflectionstudio.io/).
+
+## Generate a project
+
+Install
+[uv](https://docs.astral.sh/uv/getting-started/installation/), then render the
+template directly from GitHub:
+
+```bash
+uvx cookiecutter https://github.com/Inflection-Studio/django-projects-cookiecutter
+```
 
 ## Requirements
 
@@ -64,3 +75,16 @@ instructions here and end-user instructions in the generated project.
 
 See [CONTRIBUTING.md](CONTRIBUTING.md) for development setup, template and
 generated-project testing, and pull request guidance.
+
+## Acknowledgements
+
+This project has learned extensively from
+[Cookiecutter Django](https://github.com/cookiecutter/cookiecutter-django) and
+the community that maintains it. This is an independently maintained template
+shaped around Inflection Studio's own project architecture and delivery
+workflows.
+
+## License
+
+This project is distributed under the
+[BSD 3-Clause License](LICENSE).
